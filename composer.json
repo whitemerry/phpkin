@@ -16,7 +16,7 @@
     },
     "autoload": {
         "psr-4": {
-            "whitemerry\\phpkin": "src"
+            "whitemerry\\phpkin\\": "src/"
         }
     }
 }
