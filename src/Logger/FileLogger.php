@@ -3,6 +3,12 @@ namespace whitemerry\phpkin\Logger;
 
 use whitemerry\phpkin\Logger;
 
+/**
+ * Class FileLogger
+ *
+ * @author Piotr Bugaj <whitemerry@outlook.com>
+ * @package whitemerry\phpkin\Logger
+ */
 class FileLogger implements Logger
 {
     /**

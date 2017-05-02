@@ -6,6 +6,12 @@ use whitemerry\phpkin\identifier\TraceIdentifier;
 use whitemerry\phpkin\Sampler\DefaultSampler;
 use whitemerry\phpkin\Sampler\Sampler;
 
+/**
+ * Class Zipkin
+ *
+ * @author Piotr Bugaj <whitemerry@outlook.com>
+ * @package whitemerry\phpkin
+ */
 class Zipkin
 {
     /**

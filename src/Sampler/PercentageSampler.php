@@ -1,6 +1,12 @@
 <?php
 namespace whitemerry\phpkin\Sampler;
 
+/**
+ * Class PercentageSampler
+ *
+ * @author Piotr Bugaj <whitemerry@outlook.com>
+ * @package whitemerry\phpkin\Sampler
+ */
 class PercentageSampler implements Sampler
 {
     /**

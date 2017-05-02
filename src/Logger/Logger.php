@@ -1,6 +1,12 @@
 <?php
 namespace whitemerry\phpkin;
 
+/**
+ * Interface Logger
+ *
+ * @author Piotr Bugaj <whitemerry@outlook.com>
+ * @package whitemerry\phpkin
+ */
 interface Logger
 {
     /**

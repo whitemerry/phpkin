@@ -1,6 +1,12 @@
 <?php
 namespace whitemerry\phpkin;
 
+/**
+ * Class Identifier
+ *
+ * @author Piotr Bugaj <whitemerry@outlook.com>
+ * @package whitemerry\phpkin
+ */
 abstract class Identifier
 {
     /**

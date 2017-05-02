@@ -1,6 +1,12 @@
 <?php
 namespace whitemerry\phpkin;
 
+/**
+ * Class Endpoint
+ *
+ * @author Piotr Bugaj <whitemerry@outlook.com>
+ * @package whitemerry\phpkin
+ */
 class Endpoint
 {
     /**

@@ -1,6 +1,12 @@
 <?php
 namespace whitemerry\phpkin;
 
+/**
+ * Class Span
+ *
+ * @author Piotr Bugaj <whitemerry@outlook.com>
+ * @package whitemerry\phpkin
+ */
 class Span
 {
     const EMPTY_IDENTIFIER = 'EMPTY_IDENTIFIER';

@@ -3,6 +3,12 @@ namespace whitemerry\phpkin\identifier;
 
 use whitemerry\phpkin\Identifier;
 
+/**
+ * Class SpanIdentifier
+ *
+ * @author Piotr Bugaj <whitemerry@outlook.com>
+ * @package whitemerry\phpkin\identifier
+ */
 class SpanIdentifier extends Identifier
 {
     /**
