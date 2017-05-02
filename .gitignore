@@ -1,0 +1,12 @@
+# PHPStorm
+.idea/
+
+# Vagrant
+
+.vagrant/
+Vagrantfile
+
+# Development
+logs/
+test.php
+test2.php
