@@ -17,6 +17,9 @@
     "autoload": {
         "psr-4": {
             "whitemerry\\phpkin\\": "src/"
-        }
+        },
+        "files": [
+            "src/functions.php"
+        ]
     }
 }
