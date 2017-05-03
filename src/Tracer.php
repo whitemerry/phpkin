@@ -98,6 +98,7 @@ class Tracer
             )
         );
         $span->unsetParentId();
+        $this->addSpan($span);
     }
 
     /**
