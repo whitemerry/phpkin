@@ -22,6 +22,6 @@ if (!function_exists('is_zipkin_timestamp')) {
      */
     function is_zipkin_timestamp($timestamp)
     {
-        return ctype_digit((string) $timestamp) && strlen($timestamp) !== 16;
+        return ctype_digit((string) $timestamp) && strlen($timestamp) === 16;
     }
 }

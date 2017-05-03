@@ -1,5 +1,6 @@
 <?php
 namespace whitemerry\phpkin;
+
 use whitemerry\phpkin\Identifier\Identifier;
 
 /**
