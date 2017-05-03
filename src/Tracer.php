@@ -1,6 +1,8 @@
 <?php
 namespace whitemerry\phpkin;
 
+use whitemerry\phpkin\Identifier\Identifier;
+use whitemerry\phpkin\Logger\Logger;
 use whitemerry\phpkin\Sampler\Sampler;
 
 /**

@@ -1,5 +1,5 @@
 <?php
-namespace whitemerry\phpkin;
+namespace whitemerry\phpkin\Identifier;
 
 /**
  * Class Identifier

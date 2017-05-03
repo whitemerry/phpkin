@@ -1,8 +1,6 @@
 <?php
 namespace whitemerry\phpkin\identifier;
 
-use whitemerry\phpkin\Identifier;
-
 /**
  * Class TraceIdentifier
  *

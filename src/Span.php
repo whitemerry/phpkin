@@ -1,5 +1,6 @@
 <?php
 namespace whitemerry\phpkin;
+use whitemerry\phpkin\Identifier\Identifier;
 
 /**
  * Class Span
@@ -25,12 +26,12 @@ class Span
     protected $annotationBlock;
 
     /**
-     * @var null|Identifier
+     * @var Identifier
      */
     protected $traceId;
 
     /**
-     * @var null|Identifier
+     * @var Identifier
      */
     protected $parentId;
 
