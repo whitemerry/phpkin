@@ -1,8 +1,6 @@
 <?php
 namespace whitemerry\phpkin\Logger;
 
-use whitemerry\phpkin\Logger;
-
 /**
  * Class FileLogger
  *
