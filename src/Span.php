@@ -27,6 +27,11 @@ class Span
     protected $annotationBlock;
 
     /**
+     * @var Metadata
+     */
+    protected $metadata;
+
+    /**
      * @var Identifier
      */
     protected $traceId;
@@ -38,11 +43,11 @@ class Span
 
     /**
      * Span constructor.
-     * Todo: BinaryAnnotationBlock
      *
      * @param $id Identifier Span identifier
      * @param $name string Span name
      * @param $annotationBlock AnnotationBlock Annotations with endpoints
+     * @param $metadata Metadata Meta annotations
      * @param $traceId Identifier Trace identifier (default from TraceInfo::getTraceId())
      * @param $parentId Identifier Parent identifier (default from TraceInfo::getTraceSpanId())
      */
@@ -50,6 +55,7 @@ class Span
         $id,
         $name,
         $annotationBlock,
+        $metadata = null,
         $traceId = null,
         $parentId = null
     )
@@ -57,6 +63,7 @@ class Span
         $this->setIdentifier('id', $id);
         $this->setName($name);
         $this->setAnnotationBlock($annotationBlock);
+        $this->setMetadata($metadata);
         $this->setIdentifier('traceId', $traceId, [TracerInfo::class, 'getTraceId']);
         $this->setIdentifier('parentId', $parentId, [TracerInfo::class, 'getTraceSpanId']);
     }
@@ -79,6 +86,10 @@ class Span
 
         if ($this->parentId !== null) {
             $span['parentId'] = (string) $this->parentId;
+        }
+
+        if ($this->metadata !== null) {
+            $span['binaryAnnotations'] = $this->metadata->toArray();
         }
 
         return $span;
@@ -122,6 +133,22 @@ class Span
         }
 
         $this->annotationBlock = $annotationBlock;
+    }
+
+    /**
+     * Valid and set metadata
+     *
+     * @param $metadata Metadata
+     *
+     * @throws \InvalidArgumentException
+     */
+    protected function setMetadata($metadata)
+    {
+        if ($metadata !== null || !($metadata instanceof Metadata)) {
+            throw new \InvalidArgumentException('$metadata must be instance of Metadata');
+        }
+
+        $this->metadata = $metadata;
     }
 
     /**
