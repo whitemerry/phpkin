@@ -2,8 +2,8 @@
 namespace whitemerry\phpkin;
 
 use whitemerry\phpkin\Identifier\Identifier;
-use whitemerry\phpkin\identifier\SpanIdentifier;
-use whitemerry\phpkin\identifier\TraceIdentifier;
+use whitemerry\phpkin\Identifier\SpanIdentifier;
+use whitemerry\phpkin\Identifier\TraceIdentifier;
 use whitemerry\phpkin\Sampler\DefaultSampler;
 use whitemerry\phpkin\Sampler\Sampler;
 
