@@ -6,13 +6,13 @@
     <img alt="Latest Stable Version" src="https://img.shields.io/packagist/v/whitemerry/phpkin.svg?style=flat-square&label=stable">
 </a>
 
-First ***production ready***, simple and full Zipkin implementation without dependencies
+First ***production ready***, simple and full Zipkin implementation without dependencies.
 
-# Installing via Composer
+## Installing via Composer
 ``` bash
 $ composer require whitemerry/phpkin
 ```
 
-# TODO:
+## TODO:
 - Documentation
 - Unit tests
