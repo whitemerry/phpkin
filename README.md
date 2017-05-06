@@ -107,6 +107,9 @@ And add to tracer
 $tracer->addSpan($span);
 ```
 
+This is result of this code:
+![alt text](docs/example-output.gif "Logo Title Text 1")
+
 #### Calling tracer statically
 You can get access to tracer statically, in every place of your project, just init TracerProxy:
 ```php
