@@ -44,7 +44,7 @@ class Tracer
      * @param $name string Name of trace
      * @param $endpoint Endpoint Current application info
      * @param $logger Logger Trace save handler
-     * @param $sampler Sampler Calculates 'Sampled' - default DefaultSampler
+     * @param $sampler bool|Sampler Set or calculate 'Sampled' - default true
      * @param $traceId Identifier TraceId - default TraceIdentifier
      * @param $traceSpanId Identifier TraceSpanId/ParentSpanId/ParentId - default SpandIdentifier
      */
@@ -91,10 +91,10 @@ class Tracer
             TracerInfo::getTraceSpanId(),
             $this->name,
             new AnnotationBlock(
-                AnnotationBlock::TYPE_SERVER,
                 $this->endpoint,
                 $this->startTimestamp,
-                zipkin_timestamp()
+                zipkin_timestamp(),
+                AnnotationBlock::SERVER
             )
         );
         $span->unsetParentId();

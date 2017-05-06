@@ -4,11 +4,12 @@ namespace whitemerry\phpkin;
 use whitemerry\phpkin\Identifier\Identifier;
 use whitemerry\phpkin\Identifier\SpanIdentifier;
 use whitemerry\phpkin\Identifier\TraceIdentifier;
-use whitemerry\phpkin\Sampler\DefaultSampler;
 use whitemerry\phpkin\Sampler\Sampler;
 
 /**
  * Class TracerInfo
+ * Contains B3 Propagation data
+ * TODO: Debug B3 header
  *
  * @author Piotr Bugaj <whitemerry@outlook.com>
  * @package whitemerry\phpkin
@@ -31,13 +32,13 @@ class TracerInfo
     protected static $traceSpanId;
 
     /**
-     * @param $sampler Sampler Calculates 'Sampled' - default DefaultSampler
+     * @param $sampler bool|Sampler Set or calucate 'Sampled' - default true
      * @param $traceId Identifier TraceId - default TraceIdentifier
      * @param $traceSpanId Identifier TraceSpanId/ParentSpanId/ParentId - default SpandIdentifier
      */
     public static function init($sampler, $traceId, $traceSpanId)
     {
-        static::setSampled($sampler, DefaultSampler::class);
+        static::setSampled($sampler);
         static::setIdentifier('traceId', $traceId, TraceIdentifier::class);
         static::setIdentifier('traceSpanId', $traceSpanId, SpanIdentifier::class);
     }
@@ -50,6 +51,7 @@ class TracerInfo
      */
     public static function isSampled()
     {
+        static::checkInit();
         return static::$sampled;
     }
 
@@ -61,6 +63,7 @@ class TracerInfo
      */
     public static function getTraceId()
     {
+        static::checkInit();
         return static::$traceId;
     }
 
@@ -72,28 +75,37 @@ class TracerInfo
      */
     public static function getTraceSpanId()
     {
+        static::checkInit();
         return static::$traceSpanId;
     }
 
     /**
      * Valid and set sampled
      *
-     * @param $sampler Sampler
-     * @param $defaultSampler callable
+     * @param $sampler Sampler|bool
      *
      * @throws \InvalidArgumentException
+     *
+     * @return null
      */
-    protected static function setSampled($sampler, $defaultSampler)
+    protected static function setSampled($sampler)
     {
         if ($sampler === null) {
-            $sampler = new $defaultSampler();
+            static::$sampled = true;
+            return null;
         }
 
-        if (!($sampler instanceof Sampler)) {
-            throw new \InvalidArgumentException('$sampler must be instance of Sampler');
+        if (is_bool($sampler)) {
+            static::$sampled = $sampler;
+            return null;
+        }
+
+        if (!is_bool($sampler) && !($sampler instanceof Sampler)) {
+            throw new \InvalidArgumentException('$sampler must be instance of Sampler or boolean');
         }
 
         static::$sampled = $sampler->isSampled();
+        return null;
     }
 
     /**
@@ -116,5 +128,17 @@ class TracerInfo
         }
 
         static::${$field} = $identifier;
+    }
+
+    /**
+     * Check is initialized
+     *
+     * @throws \BadMethodCallException
+     */
+    protected static function checkInit()
+    {
+        if (empty(static::$traceId)) {
+            throw new \BadMethodCallException('TracerInfo must be initialized first');
+        }
     }
 }

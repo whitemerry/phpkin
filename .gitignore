@@ -1,12 +1,15 @@
 # PHPStorm
 .idea/
 
-# Vagrant
-
+# Vagrant (+ zipkin)
 .vagrant/
 Vagrantfile
 
-# Development
+# Unit tests
+composer.lock
+vendor/
+log/
+
+# Local tests
+overview.php
 logs/
-test.php
-test2.php

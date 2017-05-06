@@ -28,7 +28,7 @@ class Endpoint
      * Endpoint constructor.
      *
      * @param $serviceName string Service name
-     * @param $ip string IP address
+     * @param $ip string Ip
      * @param $port string Port
      */
     public function __construct($serviceName, $ip, $port = '80')
@@ -62,7 +62,7 @@ class Endpoint
     protected function setServiceName($serviceName)
     {
         if (!is_string($serviceName)) {
-            throw new \InvalidArgumentException('The service name must be a string');
+            throw new \InvalidArgumentException('$serviceName must be a string');
         }
 
         $this->serviceName = $serviceName;
@@ -78,7 +78,7 @@ class Endpoint
     protected function setIp($ip)
     {
         if (filter_var($ip, FILTER_VALIDATE_IP) === false) {
-            throw new \InvalidArgumentException('The IP address must be correct');
+            throw new \InvalidArgumentException('$ip must be correct');
         }
 
         $this->ip = $ip;
@@ -94,7 +94,7 @@ class Endpoint
     protected function setPort($port)
     {
         if (ctype_digit($port) === false) {
-            throw new \InvalidArgumentException('Port can only contain digits');
+            throw new \InvalidArgumentException('$port can only contain digits');
         }
 
         $this->port = $port;

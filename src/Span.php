@@ -144,7 +144,7 @@ class Span
      */
     protected function setMetadata($metadata)
     {
-        if ($metadata !== null || !($metadata instanceof Metadata)) {
+        if ($metadata !== null && !($metadata instanceof Metadata)) {
             throw new \InvalidArgumentException('$metadata must be instance of Metadata');
         }
 

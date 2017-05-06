@@ -2,7 +2,7 @@
 namespace whitemerry\phpkin;
 
 /**
- * Class Metadata (BinaryAnnotations set)
+ * Class Metadata (BinaryAnnotations block)
  *
  * Constants and descriptions from:
  * https://github.com/openzipkin/zipkin/blob/master/zipkin/src/main/java/zipkin/Constants.java

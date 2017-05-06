@@ -25,7 +25,7 @@ class PercentageSampler implements Sampler
     public function __construct($options = [])
     {
         $defaults = [
-            'percents' => '50'
+            'percents' => 50
         ];
 
         $this->options = array_merge($defaults, $options);
