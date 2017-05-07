@@ -26,11 +26,13 @@ $endpoint = new Endpoint(
     '80' // Current application port (default 80)
 );
 ```
-Next, define storage for traces - now implemented is only one, but you can implement own using our interface, FileLogger (Scroll below for more information about loggers in php):
+Next, define storage for traces - currently two types are supported - SimpleHttpLogger and FileLogger,
+SimpleHttpLogger automatically sends trace data to Zipkin's service,
+FileLogger (you can read more about this logger below) sends trace data to file, then you need to write curl for uploading this data to Zipkin's
+(of course you can implement own using our interface):
 ```php
-$logger = new FileLogger([
-    'path' => './logs', // Zipkin traces logs location
-    'fileName' => 'zipkin.log' // File name
+$logger = new SimpleHttpLogger([
+    'host' => 'http://192.168.33.11:9411' // Zipkin's API host with schema (http://) and without trailing slash
 ]);
 ```
 ***Now you can initialize Tracer!***
@@ -66,7 +68,7 @@ As last step just trigger trace method from $tracer, for example in shutdown eve
 ```php
 $tracer->trace();
 ```
-Now as you can see, requests to your website are generating new lines in logs/zipkin.log
+Now as you can see, you have new entries in the Zipkin's UI! :)
 
 #### Adding spans to trace
 As you already now, in Zipkin, you can store and visualize communication between 2 services (for example databases, microservices). 
@@ -131,11 +133,19 @@ TracerInfo::isSampled(); // Sampled - X-B3-Sampled
 ```
 Remember to set this headers to request in your client to other services.
 
-#### Why FileLogger?
+#### Why do i prefer FileLogger?
 You can write your own logger. I prefer this type, because optimization.
-It's better to send logs to Zipkin in background than increasing page load time by sending next request to API. 
+It's better to store logs in files and send to Zipkin in background than increasing page load time by sending next request to API. 
 
 Don't let your users wait :)
+
+Usage example:
+```php
+$logger = new FileLogger([
+    'path' => './logs', // Zipkin traces logs location
+    'fileName' => 'zipkin.log' // File name
+]);
+```
 
 #### How can i upload logs to Zipkin?
 Use Zipkin's rest API and send traces from zipkin.log.
