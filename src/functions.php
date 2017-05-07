@@ -25,3 +25,29 @@ if (!function_exists('is_zipkin_timestamp')) {
         return ctype_digit((string) $timestamp) && strlen($timestamp) === 16;
     }
 }
+
+if (!function_exists('is_zipkin_trace_identifier')) {
+    /**
+     * Is zipkin trace identifier
+     *
+     * @param $identifier string|\whitemerry\phpkin\Identifier\Identifier
+     *
+     * @return bool
+     */
+    function is_zipkin_trace_identifier($identifier) {
+        return ctype_xdigit((string) $identifier) && strlen((string) $identifier) === 32;
+    }
+}
+
+if (!function_exists('is_zipkin_span_identifier')) {
+    /**
+     * Is zipkin span identifier
+     *
+     * @param $identifier string|\whitemerry\phpkin\Identifier\Identifier
+     *
+     * @return bool
+     */
+    function is_zipkin_span_identifier($identifier) {
+        return ctype_xdigit((string) $identifier) && strlen((string) $identifier) === 16;
+    }
+}
