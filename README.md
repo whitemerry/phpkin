@@ -148,8 +148,11 @@ $logger = new FileLogger([
 ```
 
 #### How can i upload logs to Zipkin?
-Use Zipkin's rest API and send traces from zipkin.log.
+For SimpleHttpLogger:
+It does eveything for you.
 
+For FileLogger:
+Use Zipkin's rest API and send traces from zipkin.log.
 How do i do that? Cron every 10 minutes, calling action witch sends POST.
 
 You can read more about Zipkin's API endpoint [here](http://zipkin.io/zipkin-api/#/paths/%252Fspans/post)
