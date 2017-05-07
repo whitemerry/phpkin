@@ -48,9 +48,9 @@ $tracer = new Tracer(
 ```
 For back-end applications / microservices (Consumer of existing TraceId, SpanId and Sampled)
 ```php
-$sampled = $_SERVER['HTTP_X_B3_Sampled']; // Remember to escape data :)
-$traceId = $_SERVER['HTTP_X_B3_TraceId']; // Remember to escape data :)
-$traceSpanId = $_SERVER['HTTP_X_B3_SpanId']; // Remember to escape data :)
+$sampled = $_SERVER['HTTP_X_B3_SAMPLED']; // Remember to escape data :)
+$traceId = new TraceIdentifier($_SERVER['HTTP_X_B3_TRACEID']); // Set from header (if failed generate new)
+$traceSpanId = new SpanIdentifier($_SERVER['HTTP_X_B3_SPANID']); // Set from header (if failed generate new)
 
 $tracer = new Tracer(
     'http://localhost/login',
