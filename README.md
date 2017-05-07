@@ -48,6 +48,7 @@ $tracer = new Tracer(
 ```
 For back-end applications / microservices (Consumer of existing TraceId, SpanId and Sampled)
 ```php
+// before that check these 3 headers are set (ie. !empty($_SERVER['HTTP_X_B3_SAMPLED']) x3)
 $sampled = $_SERVER['HTTP_X_B3_SAMPLED']; // Remember to escape data :)
 $traceId = new TraceIdentifier($_SERVER['HTTP_X_B3_TRACEID']); // Set from header (if failed generate new)
 $traceSpanId = new SpanIdentifier($_SERVER['HTTP_X_B3_SPANID']); // Set from header (if failed generate new)
