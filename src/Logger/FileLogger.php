@@ -35,7 +35,7 @@ class FileLogger implements Logger
         $this->options = array_merge($defaults, $options);
 
         if (!is_dir($this->options['path'])) {
-            throw new \BadMethodCallException('Invalid logs directory');
+            throw new LoggerException('Invalid logs directory');
         }
     }
 
