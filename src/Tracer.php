@@ -78,6 +78,10 @@ class Tracer
      */
     public function trace()
     {
+        if (!TracerInfo::isSampled()) {
+            return;
+        }
+        
         $this->addTraceSpan();
         $this->logger->trace($this->spans);
     }
