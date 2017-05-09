@@ -101,10 +101,10 @@ class AnnotationBlock
     {
         switch ($type) {
             case static::CLIENT:
-                $this->values = ['cr', 'cs'];
+                $this->values = ['cs', 'cr'];
                 break;
             case static::SERVER:
-                $this->values = ['ss', 'sr'];
+                $this->values = ['sr', 'ss'];
                 break;
             default:
                 throw new \InvalidArgumentException('$type must be TYPE_CLIENT or TYPE_SERVER');
