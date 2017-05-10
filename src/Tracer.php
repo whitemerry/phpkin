@@ -75,21 +75,25 @@ class Tracer
 
     /**
      * Save trace
+     *
+     * @param $unsetParentId bool are you frontend?
      */
-    public function trace()
+    public function trace($unsetParentId = true)
     {
         if (!TracerInfo::isSampled()) {
             return;
         }
         
-        $this->addTraceSpan();
+        $this->addTraceSpan($unsetParentId);
         $this->logger->trace($this->spans);
     }
 
     /**
      * Adds main span to Spans
+     *
+     * @param $unsetParentId bool are you frontend?
      */
-    protected function addTraceSpan()
+    protected function addTraceSpan($unsetParentId = true)
     {
         $span = new Span(
             TracerInfo::getTraceSpanId(),
@@ -101,7 +105,9 @@ class Tracer
                 AnnotationBlock::SERVER
             )
         );
-        $span->unsetParentId();
+        if ($unsetParentId) {
+            $span->unsetParentId();
+        }
         $this->addSpan($span);
     }
 
