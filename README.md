@@ -67,7 +67,10 @@ All these lines must be initialized as soon as possible, in frameworks bootstrap
 
 As last step just trigger trace method from $tracer, for example in shutdown event of your framework, or at the end of index.php
 ```php
+// For frontend applications:
 $tracer->trace();
+// For backend applications:
+$tracer->trace(false);
 ```
 Now as you can see, you have new entries in the Zipkin's UI! :)
 
