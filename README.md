@@ -26,17 +26,14 @@ $endpoint = new Endpoint(
     '80' // Current application port (default 80)
 );
 ```
-Next, define storage for traces - currently two types are supported - SimpleHttpLogger and FileLogger,
-SimpleHttpLogger automatically sends trace data to Zipkin's service,
-FileLogger (you can read more about this logger below) sends trace data to file, then you need to write curl for uploading this data to Zipkin's
-(of course you can implement own using our interface):
+Next, define storage for traces - currently two types are supported - SimpleHttpLogger witch automatically sends trace data to Zipkin's service and
+FileLogger (you can read more about this below):
 ```php
 $logger = new SimpleHttpLogger([
     'host' => 'http://192.168.33.11:9411' // Zipkin's API host with schema (http://) and without trailing slash
 ]);
 ```
 ***Now you can initialize Tracer!***
-Remember, more parameters with descriptions you will find in ***PHPDocs***! For example, if you are front-end application you can use PercentageSampler, tool for toggling tracing logs (You don't need to log everyting).
 
 For front-end applications (Source for TraceId, SpanId and Sampled for other microservices):
 ```php
@@ -45,13 +42,24 @@ $tracer = new Tracer(
     $endpoint, // Your application meta-information
     $logger // Logger used to store/send traces
 );
+$tracer->setProfile(Tracer::FRONTEND);
 ```
 For back-end applications / microservices (Consumer of existing TraceId, SpanId and Sampled)
 ```php
-// before that check these 3 headers are set (ie. !empty($_SERVER['HTTP_X_B3_SAMPLED']) x3)
-$sampled = $_SERVER['HTTP_X_B3_SAMPLED']; // Remember to escape data :)
-$traceId = new TraceIdentifier($_SERVER['HTTP_X_B3_TRACEID']); // Set from header (if failed generate new)
-$traceSpanId = new SpanIdentifier($_SERVER['HTTP_X_B3_SPANID']); // Set from header (if failed generate new)
+$traceId = null;
+if (!empty($_SERVER['HTTP_X_B3_TRACEID'])) {
+    $traceId = new TraceIdentifier($_SERVER['HTTP_X_B3_TRACEID']);
+}
+
+$traceSpanId = null;
+if (!empty($_SERVER['HTTP_X_B3_SPANID'])) {
+    $traceSpanId = new SpanIdentifier($_SERVER['HTTP_X_B3_SPANID']);
+}
+
+$isSampled = null;
+if (!empty($_SERVER['HTTP_X_B3_SAMPLED'])) {
+    $isSampled = (bool) $_SERVER['HTTP_X_B3_SAMPLED'];
+}
 
 $tracer = new Tracer(
     'http://localhost/login',
@@ -61,16 +69,18 @@ $tracer = new Tracer(
     $traceId,
     $traceSpanId
 );
+$tracer->setProfile(Tracer::BACKEND);
 ```
 
 All these lines must be initialized as soon as possible, in frameworks bootstrap.php is good place.
 
+There are more parameters with descriptions in ***PHPDocs***! 
+For example, if you are front-end application you can use PercentageSampler, tool for toggling tracing logs (You don't need to log everything).
+
+
 As last step just trigger trace method from $tracer, for example in shutdown event of your framework, or at the end of index.php
 ```php
-// For frontend applications:
 $tracer->trace();
-// For backend applications:
-$tracer->trace(false);
 ```
 Now as you can see, you have new entries in the Zipkin's UI! :)
 
@@ -113,9 +123,6 @@ And add to tracer
 $tracer->addSpan($span);
 ```
 
-This is result of this code:
-![example output](docs/example-output.gif)
-
 #### Calling tracer statically
 You can get access to tracer statically, in every place of your project, just init TracerProxy:
 ```php
@@ -135,36 +142,31 @@ TracerInfo::getTraceId(); // TraceId - X-B3-TraceId
 TracerInfo::getTraceSpanId(); // ParentId - X-B3-ParentId
 TracerInfo::isSampled(); // Sampled - X-B3-Sampled
 ```
-Remember to set this headers to request in your client to other services.
 
-#### Why do i prefer FileLogger?
-You can write your own logger. I prefer this type, because optimization.
-It's better to store logs in files and send to Zipkin in background than increasing page load time by sending next request to API. 
+#### Making requests to other service
+Take a look at our [examples](https://github.com/whitemerry/phpkin/tree/master/example). You need to set B3 header by your own in yours rest/api/guzzle client.
 
-Don't let your users wait :)
+#### Differences between loggers
+SimpleHttpLogger - Allows you to try zipkin right away, by uploading logs at the end of user request to webiste. 
+However, it will delay the response back to the user.
 
-Usage example:
-```php
-$logger = new FileLogger([
-    'path' => './logs', // Zipkin traces logs location
-    'fileName' => 'zipkin.log' // File name
-]);
-```
+FileLogger - Allows you to setup asynchronous reporting to zipkin. While this is a synchronous write to disk, in practice latency impact to callers is minimal, but you need to write *upload to zipkin* tool by your own.
 
-#### How can i upload logs to Zipkin?
-For SimpleHttpLogger:
-It does eveything for you.
+For more info read [this ticket](https://github.com/whitemerry/phpkin/issues/2)!
 
-For FileLogger:
-Use Zipkin's rest API and send traces from zipkin.log.
-How do i do that? Cron every 10 minutes, calling action witch sends POST.
+#### Are logs automatically uploaded to Zipkin?
+For SimpleHttpLogger, short answer, ***yes***
 
-You can read more about Zipkin's API endpoint [here](http://zipkin.io/zipkin-api/#/paths/%252Fspans/post)
+For FileLogger, bit logner answer, you need to upload logs from *zipkin.log* to Zipkin by your own, for example by cron working in background making POST's to the [Zipkin (API)](http://zipkin.io/zipkin-api/#/paths/%252Fspans/post)
 
 ## Unit tests
 Code Coverage (Generated by PHPUnit):
 - Lines: 70.35% (140 / 199)
 - Functions and Methods: 52.08% (25 / 48)
 - Classes and Traits: 58.33% (7 / 12)
+
+##Todo
+- AsyncHttpLogger (Based on CURL)
+- *Upload to zipkin* cron for FileLogger
 ---
 Inspired by [Tolerance](https://github.com/Tolerance/Tolerance)
