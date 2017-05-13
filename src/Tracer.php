@@ -107,7 +107,12 @@ class Tracer
             return;
         }
 
-        $this->addTraceSpan($this->profile === static::BACKEND && $this->unsetParentIdForBackend);
+        $unsetParentId = true;
+        if ($this->profile === static::BACKEND && !$this->unsetParentIdForBackend) {
+            $unsetParentId = false;
+        }
+
+        $this->addTraceSpan($unsetParentId);
         $this->logger->trace($this->spans);
     }
 

@@ -49,7 +49,7 @@ if (!empty($_SERVER['HTTP_X_B3_SAMPLED'])) {
  * And create tracer object, if you want to have statically access just initialize TracerProxy
  * TracerProxy::init($tracer);
  */
-$tracer = new Tracer('get /index.php', $endpoint, $logger, $isSampled, $traceId, $traceSpanId);
+$tracer = new Tracer('backend get /index.php', $endpoint, $logger, $isSampled, $traceId, $traceSpanId);
 $tracer->setProfile(Tracer::BACKEND);
 
 /**

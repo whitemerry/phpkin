@@ -30,7 +30,7 @@ $logger = new SimpleHttpLogger(['host' => 'http://127.0.0.1:9411', 'muteErrors' 
  * And create tracer object, if you want to have statically access just initialize TracerProxy
  * TracerProxy::init($tracer);
  */
-$tracer = new Tracer('get /index.php', $endpoint, $logger);
+$tracer = new Tracer('frontend get /index.php', $endpoint, $logger);
 
 /**
  * Here is place for your application logic, we are making request to example REST API
