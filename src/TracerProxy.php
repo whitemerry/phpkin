@@ -38,9 +38,9 @@ class TracerProxy
     /**
      * @see Tracer::trace()
      */
-    public static function trace($unsetParentId = true)
+    public static function trace()
     {
-        static::checkInstance($unsetParentId);
+        static::checkInstance();
         static::$instance->trace();
     }
 

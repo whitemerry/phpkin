@@ -13,6 +13,9 @@ use whitemerry\phpkin\Sampler\Sampler;
  */
 class Tracer
 {
+    const FRONTEND = 'frontend';
+    const BACKEND = 'backend';
+
     /**
      * @var string
      */
@@ -39,6 +42,16 @@ class Tracer
     protected $spans = [];
 
     /**
+     * @var string
+     */
+    protected $profile = Tracer::FRONTEND;
+
+    /**
+     * @var bool
+     */
+    protected $unsetParentIdForBackend = false;
+
+    /**
      * Tracer constructor.
      * 
      * @param $name string Name of trace
@@ -57,6 +70,18 @@ class Tracer
         $this->setLogger($logger);
 
         $this->startTimestamp = zipkin_timestamp();
+
+        $this->unsetParentIdForBackend = $traceSpanId === null;
+    }
+
+    /**
+     * Set's application profile
+     *
+     * @param $profile string Tracer::FRONTEND or Tracer::BACKEND
+     */
+    public function setProfile($profile)
+    {
+        $this->profile = $profile;
     }
 
     /**
@@ -75,16 +100,14 @@ class Tracer
 
     /**
      * Save trace
-     *
-     * @param $unsetParentId bool are you frontend?
      */
-    public function trace($unsetParentId = true)
+    public function trace()
     {
         if (!TracerInfo::isSampled()) {
             return;
         }
-        
-        $this->addTraceSpan($unsetParentId);
+
+        $this->addTraceSpan($this->profile === static::BACKEND && $this->unsetParentIdForBackend);
         $this->logger->trace($this->spans);
     }
 
