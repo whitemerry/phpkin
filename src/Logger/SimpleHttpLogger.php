@@ -55,7 +55,10 @@ class SimpleHttpLogger implements Logger
         $context = stream_context_create(array_merge_recursive($contextOptions, $this->options['contextOptions']));
         @file_get_contents($this->options['host'] . $this->options['endpoint'], false, $context);
 
-        if (!$this->options['muteErrors'] && !$this->validResponse($http_response_header)) {
+        if (
+            !$this->options['muteErrors']
+            && (empty($http_response_header) || !$this->validResponse($http_response_header))
+        ) {
             throw new LoggerException('Trace upload failed');
         }
     }
@@ -67,10 +70,6 @@ class SimpleHttpLogger implements Logger
      */
     protected function validResponse($headers)
     {
-        if (empty($headers)) {
-            return false;
-        }
-
         foreach ($headers as $header) {
             if (preg_match('/202/', $header)) {
                 return true;

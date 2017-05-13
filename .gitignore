@@ -13,3 +13,6 @@ log/
 # Local tests
 overview.php
 logs/
+
+# Example app
+/example/zipkin-server-1.24.0-exec.jar
