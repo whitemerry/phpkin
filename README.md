@@ -1,6 +1,6 @@
 # phpkin
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square "Software License")](LICENSE)
-[![Latest Stable Version](https://img.shields.io/packagist/v/whitemerry/phpkin.svg?style=flat-square&label=stable "Latest Stable Version")](https://packagist.org/packages/whitemerry/phpkin)
+[![Latest Stable Version](https://img.shields.io/packagist/v/whitemerry/phpkin.svg?style=flat-square&label=stable "Latest Stable Version")](https://packagist.org/packages/whitemerry/phpkin) [![OpenTracing Badge](https://img.shields.io/badge/OpenTracing-enabled-blue.svg)](http://opentracing.io)
 
 First ***production ready***, simple and full Zipkin implementation without dependencies.
 
