@@ -35,7 +35,8 @@ if (!function_exists('is_zipkin_trace_identifier')) {
      * @return bool
      */
     function is_zipkin_trace_identifier($identifier) {
-        return ctype_xdigit((string) $identifier) && strlen((string) $identifier) === 32;
+        return ctype_xdigit((string) $identifier) &&
+            (strlen((string) $identifier) === 16 || strlen((string) $identifier) === 32);
     }
 }
 
