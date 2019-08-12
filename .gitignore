@@ -9,6 +9,7 @@ Vagrantfile
 composer.lock
 vendor/
 log/
+build/
 
 # Local tests
 overview.php
