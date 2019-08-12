@@ -14,7 +14,7 @@ interface Logger
      *
      * @param $options
      */
-    public function __construct($options = []);
+    public function __construct($options = array());
 
     /**
      * @param $spans array

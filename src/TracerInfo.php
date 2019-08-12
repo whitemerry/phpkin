@@ -39,6 +39,8 @@ class TracerInfo
     public static function init($sampler, $traceId, $traceSpanId)
     {
         static::setSampled($sampler);
+
+        # FIXME: Class name constant is available in PHP 5.5 only
         static::setIdentifier('traceId', $traceId, TraceIdentifier::class);
         static::setIdentifier('traceSpanId', $traceSpanId, SpanIdentifier::class);
     }

@@ -51,7 +51,7 @@ class Span
      * @param $traceId Identifier Trace identifier (default from TraceInfo::getTraceId())
      * @param $parentId Identifier Parent identifier (default from TraceInfo::getTraceSpanId())
      */
-    function __construct(
+    public function __construct(
         $id,
         $name,
         $annotationBlock,
@@ -64,8 +64,10 @@ class Span
         $this->setName($name);
         $this->setAnnotationBlock($annotationBlock);
         $this->setMetadata($metadata);
-        $this->setIdentifier('traceId', $traceId, [TracerInfo::class, 'getTraceId']);
-        $this->setIdentifier('parentId', $parentId, [TracerInfo::class, 'getTraceSpanId']);
+
+        # FIXME: Class name constant is available in PHP 5.5 only
+        $this->setIdentifier('traceId', $traceId, array(TracerInfo::class, 'getTraceId'));
+        $this->setIdentifier('parentId', $parentId, array(TracerInfo::class, 'getTraceSpanId'));
     }
 
     /**
@@ -75,14 +77,14 @@ class Span
      */
     public function toArray()
     {
-        $span = [
+        $span = array(
             'id' => (string) $this->id,
             'traceId' => (string) $this->traceId,
             'name' => $this->name,
             'timestamp' => $this->annotationBlock->getStartTimestamp(),
             'duration' => $this->annotationBlock->getDuration(),
             'annotations' => $this->annotationBlock->toArray()
-        ];
+        );
 
         if ($this->parentId !== null) {
             $span['parentId'] = (string) $this->parentId;

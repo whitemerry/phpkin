@@ -14,7 +14,7 @@ interface Sampler
      *
      * @param array $options
      */
-    public function __construct($options = []);
+    public function __construct($options = array());
 
     /**
      * Returns calculated flag

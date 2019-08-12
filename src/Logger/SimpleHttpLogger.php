@@ -29,29 +29,31 @@ class SimpleHttpLogger implements Logger
      */
     public function __construct($options = [])
     {
-        $defaults = [
+        $defaults = array(
             'host' => 'http://127.0.0.1:9144',
             'endpoint' => '/api/v1/spans',
             'muteErrors' => true,
-            'contextOptions' => []
-        ];
+            'contextOptions' => array()
+        );
 
         $this->options = array_merge($defaults, $options);
     }
 
     /**
      * @inheritdoc
+     *
+     * @throws LoggerException
      */
     public function trace($spans)
     {
-        $contextOptions = [
-            'http' => [
+        $contextOptions = array(
+            'http' => array(
                 'method' => 'POST',
                 'header' => 'Content-type: application/json',
                 'content' => json_encode($spans),
                 'ignore_errors' => true
-            ]
-        ];
+            )
+        );
         $context = stream_context_create(array_merge_recursive($contextOptions, $this->options['contextOptions']));
         @file_get_contents($this->options['host'] . $this->options['endpoint'], false, $context);
 
@@ -65,6 +67,8 @@ class SimpleHttpLogger implements Logger
 
     /**
      * Search for 202 header
+     *
+     * @param $headers array
      *
      * @return bool
      */

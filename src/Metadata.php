@@ -68,7 +68,7 @@ class Metadata
     /**
      * @var array[]
      */
-    protected $annotations = [];
+    protected $annotations = array();
 
     /**
      * Set meta annotation
@@ -88,10 +88,10 @@ class Metadata
             throw new \InvalidArgumentException('$value must be string, int or bool');
         }
 
-        $this->annotations[] = [
+        $this->annotations[] = array(
             'key' => $key,
             'value' => (string) $value
-        ];
+        );
     }
 
     /**

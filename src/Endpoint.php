@@ -45,11 +45,11 @@ class Endpoint
      */
     public function toArray()
     {
-        return [
+        return array(
             'serviceName' => $this->serviceName,
             'ipv4' => $this->ip,
             'port' => $this->port
-        ];
+        );
     }
 
     /**

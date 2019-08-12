@@ -28,6 +28,8 @@ class TracerProxy
 
     /**
      * @see Tracer::addSpan($span)
+     *
+     * @param $span Span
      */
     public static function addSpan($span)
     {
