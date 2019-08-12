@@ -1,0 +1,76 @@
+- pipeline: "Test"
+  trigger_mode: "ON_EVERY_PUSH"
+  ref_name: "master"
+  ref_type: "BRANCH"
+  target_site_url: "https://github.com/whitemerry/phpkin"
+  trigger_condition: "ALWAYS"
+
+  actions:
+    - action: "Execute: phpunit"
+      type: "BUILD"
+      working_directory: "/buddy/phpkin"
+      docker_image_name: "library/php"
+      docker_image_tag: "7.1.31-stretch"
+      execute_commands:
+        - "composer install"
+        - "cc-test-reporter before-build"
+        - "./vendor/bin/phpunit"
+        - "cc-test-reporter after-build --exit-code 0 --coverage-input-type clover"
+      setup_commands:
+        - "apt-get update && apt-get install -y git zip"
+        - "curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer"
+        - "apt-get install -y libfreetype6-dev"
+        - "apt-get install -y libjpeg62-turbo-dev"
+        - "apt-get install -y libpng-dev"
+        - "docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-png-dir=/usr/include/"
+        - "docker-php-ext-install gd"
+        - "apt-get install -y zip"
+        - "apt-get install -y unzip"
+        - "apt-get install -y zlib1g-dev"
+        - "docker-php-ext-install zip"
+        - "docker-php-ext-configure pdo_mysql --with-pdo-mysql"
+        - "docker-php-ext-install pdo_mysql"
+        - "pecl install xdebug-2.6.0 && docker-php-ext-enable xdebug"
+        - "curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 -o /usr/local/bin/cc-test-reporter"
+        - "chmod +x /usr/local/bin/cc-test-reporter"
+      mount_filesystem_path: "/buddy/phpkin"
+      shell: "BASH"
+      trigger_condition: "ALWAYS"
+      variables:
+        - id: 196184
+          key: "CC_TEST_REPORTER_ID"
+          value: "secure!P/qbEphujs7lJ6VSGrOSF0OTxdjnsb7AMzY0iIGwuWv9yMfHpGSxkcHtYrybV3FTOcxSGyaRbemD7HNVa9Oy9sD/8ZAYRY0nZltbdqkxsnM="
+          encrypted: true
+          description: ""
+
+    - action: "Send notification to opensource channel"
+      type: "SLACK"
+      content: "[#$BUDDY_EXECUTION_ID] $BUDDY_PIPELINE_NAME execution by <$BUDDY_INVOKER_URL|$BUDDY_INVOKER_NAME>"
+      channel: "CLXK74X2P"
+      channel_name: "opensource"
+      attachments:
+        - "{\"fallback\":\"$BUDDY_PIPELINE_NAME execution #$BUDDY_EXECUTION_ID\",\"color\":\"good\",\"fields\":[{\"title\":\"Successful execution\",\"value\":\"<$BUDDY_EXECUTION_URL|Execution #$BUDDY_EXECUTION_ID $BUDDY_EXECUTION_COMMENT>\",\"short\":true},{\"title\":\"Pipeline\",\"value\":\"<$BUDDY_PIPELINE_URL|$BUDDY_PIPELINE_NAME>\",\"short\":true},{\"title\":\"Branch\",\"value\":\"$BUDDY_EXECUTION_BRANCH\",\"short\":true},{\"title\":\"Project\",\"value\":\"<$BUDDY_PROJECT_URL|$BUDDY_PROJECT_NAME>\",\"short\":true}]}"
+      trigger_condition: "ALWAYS"
+      integration_id: 59405
+
+    - action: "Send notification to opensource channel"
+      type: "SLACK"
+      trigger_time: "ON_FAILURE"
+      content: "[#$BUDDY_EXECUTION_ID] $BUDDY_PIPELINE_NAME execution by <$BUDDY_INVOKER_URL|$BUDDY_INVOKER_NAME>"
+      channel: "CLXK74X2P"
+      channel_name: "opensource"
+      attachments:
+        - "{\"fallback\":\"$BUDDY_PIPELINE_NAME execution #$BUDDY_EXECUTION_ID\",\"color\":\"danger\",\"fields\":[{\"title\":\"Failed execution\",\"value\":\"<$BUDDY_EXECUTION_URL|Execution #$BUDDY_EXECUTION_ID $BUDDY_EXECUTION_COMMENT>\",\"short\":true},{\"title\":\"Pipeline\",\"value\":\"<$BUDDY_PIPELINE_URL|$BUDDY_PIPELINE_NAME>\",\"short\":true},{\"title\":\"Branch\",\"value\":\"$BUDDY_EXECUTION_BRANCH\",\"short\":true},{\"title\":\"Project\",\"value\":\"<$BUDDY_PROJECT_URL|$BUDDY_PROJECT_NAME>\",\"short\":true}]}"
+      trigger_condition: "ALWAYS"
+      integration_id: 59405
+
+    - action: "Send notification to opensource channel"
+      type: "SLACK"
+      trigger_time: "ON_BACK_TO_SUCCESS"
+      content: "[#$BUDDY_EXECUTION_ID] $BUDDY_PIPELINE_NAME execution by <$BUDDY_INVOKER_URL|$BUDDY_INVOKER_NAME>"
+      channel: "CLXK74X2P"
+      channel_name: "opensource"
+      attachments:
+        - "{\"fallback\":\"$BUDDY_PIPELINE_NAME execution #$BUDDY_EXECUTION_ID\",\"color\":\"good\",\"fields\":[{\"title\":\"Successful execution\",\"value\":\"<$BUDDY_EXECUTION_URL|Execution #$BUDDY_EXECUTION_ID $BUDDY_EXECUTION_COMMENT>\",\"short\":true},{\"title\":\"Pipeline\",\"value\":\"<$BUDDY_PIPELINE_URL|$BUDDY_PIPELINE_NAME>\",\"short\":true},{\"title\":\"Branch\",\"value\":\"$BUDDY_EXECUTION_BRANCH\",\"short\":true},{\"title\":\"Project\",\"value\":\"<$BUDDY_PROJECT_URL|$BUDDY_PROJECT_NAME>\",\"short\":true}]}"
+      trigger_condition: "ALWAYS"
+      integration_id: 59405
