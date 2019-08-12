@@ -23,7 +23,7 @@ class Mocker
         new Tracer(
             'hut',
             static::getEndpoint(),
-            new FileLogger(['path' => './'])
+            new FileLogger(array('path' => './'))
         );
     }
 

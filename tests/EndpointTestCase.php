@@ -40,6 +40,7 @@ class EndpointTestCase extends \PHPUnit_Framework_TestCase
     public function shouldFailOnName()
     {
         // given
+        # FIXME: Class name constant is available in PHP 5.5 only
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessageRegExp('/\$serviceName/');
 
@@ -55,6 +56,7 @@ class EndpointTestCase extends \PHPUnit_Framework_TestCase
     public function shouldFailOnIp()
     {
         // given
+        # FIXME: Class name constant is available in PHP 5.5 only
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessageRegExp('/\$ip/');
 
@@ -70,6 +72,7 @@ class EndpointTestCase extends \PHPUnit_Framework_TestCase
     public function shouldFailOnPort()
     {
         // given
+        # FIXME: Class name constant is available in PHP 5.5 only
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessageRegExp('/\$port/');
 

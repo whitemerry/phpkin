@@ -17,12 +17,12 @@ class MetadataTestCase extends \PHPUnit_Framework_TestCase
     public function shouldCreate()
     {
         // given
-        $data = [
-            ['part', 'basket'],
-            ['cabinet', false],
-            ['perform', 'race'],
-            ['chain', 1997]
-        ];
+        $data = array(
+            array('part', 'basket'),
+            array('cabinet', false),
+            array('perform', 'race'),
+            array('chain', 1997)
+        );
 
         // when
         $metadata = new Metadata();
@@ -45,6 +45,7 @@ class MetadataTestCase extends \PHPUnit_Framework_TestCase
     public function shouldFailOnKey()
     {
         // given
+        # FIXME: Class name constant is available in PHP 5.5 only
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessageRegExp('/\$key/');
 
@@ -63,6 +64,7 @@ class MetadataTestCase extends \PHPUnit_Framework_TestCase
     public function shouldFailOnValue()
     {
         // given
+        # FIXME: Class name constant is available in PHP 5.5 only
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessageRegExp('/\$value/');
 

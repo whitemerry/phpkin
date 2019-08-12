@@ -63,6 +63,7 @@ class AnnotationBlockTestCase extends \PHPUnit_Framework_TestCase
     public function shouldFailOnType()
     {
         // given
+        # FIXME: Class name constant is available in PHP 5.5 only
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessageRegExp('/\$type/');
 
@@ -83,6 +84,7 @@ class AnnotationBlockTestCase extends \PHPUnit_Framework_TestCase
     public function shouldFailOnEndpoint()
     {
         // given
+        # FIXME: Class name constant is available in PHP 5.5 only
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessageRegExp('/\$endpoint/');
 
@@ -101,6 +103,7 @@ class AnnotationBlockTestCase extends \PHPUnit_Framework_TestCase
     public function shouldFailOnTimestamp()
     {
         // given
+        # FIXME: Class name constant is available in PHP 5.5 only
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessageRegExp('/startTimestamp/');
 

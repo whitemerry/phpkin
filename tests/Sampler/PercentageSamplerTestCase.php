@@ -20,7 +20,7 @@ class PercentageSamplerTestCase extends \PHPUnit_Framework_TestCase
         $percents = 51;
 
         // when
-        $sampler = new PercentageSampler(['percents' => $percents]);
+        $sampler = new PercentageSampler(array('percents' => $percents));
 
         // then
         $this->assertTrue(is_bool($sampler->isSampled()));
@@ -35,7 +35,7 @@ class PercentageSamplerTestCase extends \PHPUnit_Framework_TestCase
         $percents = 0;
 
         // when
-        $sampler = new PercentageSampler(['percents' => $percents]);
+        $sampler = new PercentageSampler(array('percents' => $percents));
 
         // then
         $this->assertFalse($sampler->isSampled());
@@ -50,7 +50,7 @@ class PercentageSamplerTestCase extends \PHPUnit_Framework_TestCase
         $percents = 100;
 
         // when
-        $sampler = new PercentageSampler(['percents' => $percents]);
+        $sampler = new PercentageSampler(array('percents' => $percents));
 
         // then
         $this->assertTrue($sampler->isSampled());
