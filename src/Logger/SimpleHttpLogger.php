@@ -71,7 +71,7 @@ class SimpleHttpLogger implements Logger
     protected function validResponse($headers)
     {
         foreach ($headers as $header) {
-            if (preg_match('/202/', $header)) {
+            if (preg_match('/^HTTP\/\S+\s+202/', $header)) {
                 return true;
             }
         }
