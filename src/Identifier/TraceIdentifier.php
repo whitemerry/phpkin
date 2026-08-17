@@ -12,8 +12,9 @@ class TraceIdentifier extends Identifier
     /**
      * @inheritdoc
      *
-     * Generates an identifier when given nothing. An absent B3 header reaches
-     * $_SERVER as an empty string, so that counts as nothing too.
+     * Generates an identifier when given nothing at all. Anything else has to
+     * be a valid trace identifier, an empty string included - a header that was
+     * sent empty is a caller that got it wrong, not a caller that said nothing.
      *
      * @param $fromString string Optional, creates identifier from string
      *
@@ -21,7 +22,7 @@ class TraceIdentifier extends Identifier
      */
     public function __construct($fromString = null)
     {
-        if ($fromString === null || $fromString === '') {
+        if ($fromString === null) {
             parent::__construct();
             return;
         }
