@@ -125,6 +125,16 @@ And add to tracer
 $tracer->addSpan($span);
 ```
 
+#### Reading spans back
+Spans stay on the tracer, so you can inspect them - handy in tests or when you need to report them somewhere else:
+```php
+foreach ($tracer->getSpans() as $span) {
+    $data = $span->toArray();
+}
+```
+The span describing the trace itself is built by `trace()` (its end timestamp is not known before that), so call `getSpans()` after `trace()` to get the complete set.
+When the trace is not sampled nothing is collected and `getSpans()` stays empty.
+
 #### Calling tracer statically
 You can get access to tracer statically, in every place of your project, just init TracerProxy:
 ```php
@@ -134,6 +144,7 @@ TracerProxy::init($tracer);
 Now you have access to methods like:
 ```php
 TracerProxy::addSpan($span);
+TracerProxy::getSpans();
 TracerProxy::trace();
 ```
 
