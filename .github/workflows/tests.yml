@@ -64,15 +64,27 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+
+      - name: Install dependencies
+        run: composer update --prefer-dist --no-interaction --no-progress
+
+      # vendor/ holds only PHP sources, so building it on the amd64 host and
+      # executing it with the 32-bit interpreter is safe. It also keeps
+      # Composer out of the container, which ships without unzip.
       - name: Run tests on 32-bit PHP
         run: |
           docker run --rm --platform linux/386 \
             --volume "$PWD:/app" --workdir /app \
             php:8.3-cli sh -c '
               set -e
-              php -r "echo \"PHP_INT_SIZE=\", PHP_INT_SIZE, PHP_EOL;"
-              curl -sS https://getcomposer.org/installer \
-                | php -- --install-dir=/usr/local/bin --filename=composer
-              composer update --prefer-dist --no-interaction --no-progress
+              php -r "if (PHP_INT_SIZE !== 4) {
+                  fwrite(STDERR, \"expected a 32-bit build, got PHP_INT_SIZE=\" . PHP_INT_SIZE . \"\n\");
+                  exit(1);
+              }"
               vendor/bin/phpunit
             '
