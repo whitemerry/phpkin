@@ -73,7 +73,7 @@ class Tracer
 
         $this->startTimestamp = zipkin_timestamp();
 
-        $this->parentSpanId = $parentSpanId;
+        $this->setParentSpanId($parentSpanId);
     }
 
     /**
@@ -152,6 +152,16 @@ class Tracer
      */
     protected function addTraceSpan()
     {
+        $parentSpanId = $this->parentSpanId;
+
+        // A caller that propagates the same value as X-B3-SpanId and
+        // X-B3-ParentSpanId describes a cycle. Zipkin cannot draw one, and a
+        // root is closer to the truth than a span hanging under itself.
+        if ($parentSpanId !== null
+            && (string) $parentSpanId === (string) TracerInfo::getTraceSpanId()) {
+            $parentSpanId = null;
+        }
+
         $span = new Span(
             TracerInfo::getTraceSpanId(),
             $this->name,
@@ -163,10 +173,10 @@ class Tracer
             ),
             null,
             null,
-            $this->parentSpanId
+            $parentSpanId
         );
 
-        if ($this->parentSpanId === null) {
+        if ($parentSpanId === null) {
             $span->unsetParentId();
         }
 
@@ -203,6 +213,22 @@ class Tracer
         }
 
         $this->endpoint = $endpoint;
+    }
+
+    /**
+     * Valid and set parent span id
+     *
+     * @param $parentSpanId Identifier|null
+     *
+     * @throws \InvalidArgumentException
+     */
+    protected function setParentSpanId($parentSpanId)
+    {
+        if ($parentSpanId !== null && !($parentSpanId instanceof Identifier)) {
+            throw new \InvalidArgumentException('$parentSpanId must be instance of Identifier or null');
+        }
+
+        $this->parentSpanId = $parentSpanId;
     }
 
     /**
