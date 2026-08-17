@@ -105,17 +105,18 @@ class IdentifierTestCase extends TestCase
     }
 
     /**
-     * An absent B3 header reaches $_SERVER as an empty string, which means
-     * 'nobody told us', not 'here is a broken identifier'
+     * An absent header has no $_SERVER key at all, so it arrives as null. An
+     * empty string means the header was sent and was empty, which is a caller
+     * that got it wrong rather than a caller that said nothing
      *
      * @test
      */
-    public function shouldGenerateSpanIdentifierWhenGivenEmptyString()
+    public function shouldFailOnEmptySpanIdentifier()
     {
-        // when
-        $identifier = new SpanIdentifier('');
-
         // then
-        $this->assertSame(16, strlen((string) $identifier));
+        $this->expectExceptionWithMessage('InvalidArgumentException', '$fromString');
+
+        // when
+        new SpanIdentifier('');
     }
 }
