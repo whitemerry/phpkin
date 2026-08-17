@@ -20,15 +20,17 @@ class AnnotationBlockTestCase extends TestCase
         // given
         $endpoint = new Endpoint('squash', '8.8.8.8', '10');
         $duration = 1000;
-        $endTimestamp = zipkin_timestamp();
-        $startTimestamp = $endTimestamp - $duration;
+        // Fixed, because a timestamp is too wide for int arithmetic on 32-bit.
+        $startTimestamp = '1500000000000000';
+        $endTimestamp = '1500000000001000';
 
         // when
         $annotationBlock = new AnnotationBlock($endpoint, $startTimestamp, $endTimestamp);
         $output = $annotationBlock->toArray();
 
         // then
-        $this->assertSame($duration, $annotationBlock->getDuration());
+        // Not assertSame: the difference is a float on 32-bit builds.
+        $this->assertEquals($duration, $annotationBlock->getDuration());
         $this->assertSame($startTimestamp, $annotationBlock->getStartTimestamp());
         $this->assertCount(2, $output);
         foreach ($output as $element) {
@@ -46,15 +48,16 @@ class AnnotationBlockTestCase extends TestCase
         // given
         $endpoint = new Endpoint('pat', '8.8.4.4', '1024');
         $duration = 2048;
-        $endTimestamp = zipkin_timestamp();
-        $startTimestamp = $endTimestamp - $duration;
+        $startTimestamp = '1500000000000000';
+        $endTimestamp = '1500000000002048';
         $type = AnnotationBlock::SERVER;
 
         // when
         $annotationBlock = new AnnotationBlock($endpoint, $startTimestamp, $endTimestamp, $type);
 
         // then
-        $this->assertSame($duration, $annotationBlock->getDuration());
+        // Not assertSame: the difference is a float on 32-bit builds.
+        $this->assertEquals($duration, $annotationBlock->getDuration());
     }
 
     /**

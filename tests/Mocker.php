@@ -54,7 +54,7 @@ class Mocker
     {
         return new AnnotationBlock(
             static::getEndpoint(),
-            zipkin_timestamp() - 1000
+            zipkin_timestamp()
         );
     }
 }

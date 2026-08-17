@@ -4,11 +4,20 @@ if (!function_exists('zipkin_timestamp')) {
     /**
      * http://zipkin.io/pages/instrumenting.html#communicating-trace-information#timestamps-and-duration
      *
-     * @return int Current Unix timestamp in microseconds
+     * The value has 16 digits, which does not fit in an int on 32-bit builds,
+     * so it is returned as a numeric string. Treat it as opaque: subtracting
+     * from it degrades to float there and stops being a valid timestamp.
+     *
+     * @return string Current Unix timestamp in microseconds
      */
     function zipkin_timestamp()
     {
-        return intval(microtime(true) * 1000 * 1000);
+        list($fraction, $seconds) = explode(' ', microtime());
+
+        // microtime() always renders the fraction as "0." followed by eight
+        // digits, so slicing six of them preserves the leading zeros that
+        // concatenating an int would drop.
+        return $seconds . substr($fraction, 2, 6);
     }
 }
 
