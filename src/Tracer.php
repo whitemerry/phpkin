@@ -13,9 +13,6 @@ use whitemerry\phpkin\Sampler\Sampler;
  */
 class Tracer
 {
-    const FRONTEND = 'frontend';
-    const BACKEND = 'backend';
-
     /**
      * @var string
      */
@@ -42,26 +39,31 @@ class Tracer
     protected $spans = array();
 
     /**
-     * @var string
+     * @var Identifier|null
      */
-    protected $profile = Tracer::FRONTEND;
-
-    /**
-     * @var bool
-     */
-    protected $unsetParentIdForBackend = false;
+    protected $parentSpanId;
 
     /**
      * Tracer constructor.
-     * 
+     *
      * @param $name string Name of trace
      * @param $endpoint Endpoint Current application info
      * @param $logger Logger Trace save handler
      * @param $sampler bool|Sampler Set or calculate 'Sampled' - default true
-     * @param $traceId Identifier TraceId - default TraceIdentifier
-     * @param $traceSpanId Identifier TraceSpanId/ParentSpanId/ParentId - default SpandIdentifier
+     * @param $traceId Identifier TraceId - X-B3-TraceId - default TraceIdentifier
+     * @param $traceSpanId Identifier SpanId of this request - X-B3-SpanId - default SpanIdentifier
+     * @param $parentSpanId Identifier ParentSpanId of the caller - X-B3-ParentSpanId,
+     *                      null when this application starts the trace
      */
-    public function __construct($name, $endpoint, $logger, $sampler = null, $traceId = null, $traceSpanId = null)
+    public function __construct(
+        $name,
+        $endpoint,
+        $logger,
+        $sampler = null,
+        $traceId = null,
+        $traceSpanId = null,
+        $parentSpanId = null
+    )
     {
         TracerInfo::init($sampler, $traceId, $traceSpanId);
 
@@ -71,17 +73,7 @@ class Tracer
 
         $this->startTimestamp = zipkin_timestamp();
 
-        $this->unsetParentIdForBackend = $traceSpanId === null;
-    }
-
-    /**
-     * Set's application profile
-     *
-     * @param $profile string Tracer::FRONTEND or Tracer::BACKEND
-     */
-    public function setProfile($profile)
-    {
-        $this->profile = $profile;
+        $this->parentSpanId = $parentSpanId;
     }
 
     /**
@@ -131,12 +123,7 @@ class Tracer
             return;
         }
 
-        $unsetParentId = true;
-        if ($this->profile === static::BACKEND && !$this->unsetParentIdForBackend) {
-            $unsetParentId = false;
-        }
-
-        $this->addTraceSpan($unsetParentId);
+        $this->addTraceSpan();
         $this->logger->trace($this->spansToArray());
     }
 
@@ -158,9 +145,12 @@ class Tracer
     /**
      * Adds main span to Spans
      *
-     * @param $unsetParentId bool are you frontend?
+     * The span is parented to the caller's span when one was propagated through
+     * X-B3-ParentSpanId, otherwise this application starts the trace and the span
+     * is a root. Span defaults ParentId to the current SpanId, which would make the
+     * span its own parent, so it is always set explicitly here.
      */
-    protected function addTraceSpan($unsetParentId = true)
+    protected function addTraceSpan()
     {
         $span = new Span(
             TracerInfo::getTraceSpanId(),
@@ -170,11 +160,16 @@ class Tracer
                 $this->startTimestamp,
                 zipkin_timestamp(),
                 AnnotationBlock::SERVER
-            )
+            ),
+            null,
+            null,
+            $this->parentSpanId
         );
-        if ($unsetParentId) {
+
+        if ($this->parentSpanId === null) {
             $span->unsetParentId();
         }
+
         $this->addSpan($span);
     }
 

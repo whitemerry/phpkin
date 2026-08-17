@@ -33,8 +33,8 @@ class TracerInfo
 
     /**
      * @param $sampler bool|Sampler Set or calucate 'Sampled' - default true
-     * @param $traceId Identifier TraceId - default TraceIdentifier
-     * @param $traceSpanId Identifier TraceSpanId/ParentSpanId/ParentId - default SpandIdentifier
+     * @param $traceId Identifier TraceId - X-B3-TraceId - default TraceIdentifier
+     * @param $traceSpanId Identifier SpanId of this request - X-B3-SpanId - default SpanIdentifier
      */
     public static function init($sampler, $traceId, $traceSpanId)
     {
@@ -68,8 +68,11 @@ class TracerInfo
     }
 
     /**
-     * Current ParentSpanId/ParentId for X-B3-ParentSpanId
+     * Current SpanId for X-B3-SpanId
      * http://zipkin.io/pages/instrumenting.html#communicating-trace-information
+     *
+     * This is the id of this request's own span. When calling another service it
+     * becomes that service's X-B3-ParentSpanId.
      *
      * @return Identifier
      */

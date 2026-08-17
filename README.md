@@ -14,7 +14,25 @@ $ composer require whitemerry/phpkin
 ```
 
 ## Upgrading to 2.0
-`Tracer` used to serialize each `Span` the moment it was added. It now keeps the `Span` objects and serializes them once, in `trace()`, which is what makes `getSpans()` possible. What Zipkin receives is unchanged, but three things behave differently.
+`Tracer` used to serialize each `Span` the moment it was added. It now keeps the `Span` objects and serializes them once, in `trace()`, which is what makes `getSpans()` possible. What Zipkin receives is unchanged, but five things behave differently.
+
+#### The trace span is parented to its caller
+A back-end application used to give its trace span its own SpanId as the ParentId, so the span came out as its own parent and the caller propagated in `X-B3-ParentSpanId` was ignored. That header is now the seventh `Tracer` argument and links the span to its caller:
+```php
+$tracer = new Tracer($name, $endpoint, $logger, $isSampled, $traceId, $traceSpanId, $parentSpanId);
+```
+Leave it `null` and the span stays a root, which is what a front-end application wants.
+
+`Tracer::setProfile()`, `Tracer::FRONTEND` and `Tracer::BACKEND` are gone, because whether the span has a parent now follows from `$parentSpanId` alone. Drop the call; it fails at bootstrap rather than quietly doing nothing, which is the point - an application that kept calling it without passing `$parentSpanId` would go from self-parented spans to root spans with nothing to show anything had changed.
+
+#### Identifiers reject an invalid string
+`SpanIdentifier` and `TraceIdentifier` used to generate a fresh random identifier when handed something that was not a valid one, so a malformed B3 header produced a span attached to an id that had never existed. They now throw `InvalidArgumentException`:
+```php
+new SpanIdentifier('garbage');            // throws in 2.0, was a random identifier in 1.x
+new SpanIdentifier();                     // still generates one
+new SpanIdentifier('');                   // still generates one - an absent header reads as ''
+```
+Guard anything coming from a header with `is_zipkin_span_identifier()` / `is_zipkin_trace_identifier()`, as the back-end example below does.
 
 #### `addSpan()` only accepts `Span`
 Passing anything else throws `InvalidArgumentException`. Serialization used to happen inside `addSpan()`, so any object with a `toArray()` method quietly worked:
@@ -64,25 +82,31 @@ $logger = new SimpleHttpLogger([
 ```
 ***Now you can initialize Tracer!***
 
-For front-end applications (Source for TraceId, SpanId and Sampled for other microservices):
+For front-end applications (Source for TraceId, SpanId and Sampled for other microservices) there is nothing to
+consume, so the tracer generates the identifiers itself and starts the trace:
 ```php
 $tracer = new Tracer(
     'http://localhost/login', // Trace name
     $endpoint, // Your application meta-information
     $logger // Logger used to store/send traces
 );
-$tracer->setProfile(Tracer::FRONTEND);
 ```
-For back-end applications / microservices (Consumer of existing TraceId, SpanId and Sampled)
+For back-end applications / microservices (Consumer of existing TraceId, SpanId, ParentSpanId and Sampled) read the
+B3 headers the caller sent you and hand them to the tracer:
 ```php
 $traceId = null;
-if (!empty($_SERVER['HTTP_X_B3_TRACEID'])) {
+if (!empty($_SERVER['HTTP_X_B3_TRACEID']) && is_zipkin_trace_identifier($_SERVER['HTTP_X_B3_TRACEID'])) {
     $traceId = new TraceIdentifier($_SERVER['HTTP_X_B3_TRACEID']);
 }
 
 $traceSpanId = null;
-if (!empty($_SERVER['HTTP_X_B3_SPANID'])) {
+if (!empty($_SERVER['HTTP_X_B3_SPANID']) && is_zipkin_span_identifier($_SERVER['HTTP_X_B3_SPANID'])) {
     $traceSpanId = new SpanIdentifier($_SERVER['HTTP_X_B3_SPANID']);
+}
+
+$parentSpanId = null;
+if (!empty($_SERVER['HTTP_X_B3_PARENTSPANID']) && is_zipkin_span_identifier($_SERVER['HTTP_X_B3_PARENTSPANID'])) {
+    $parentSpanId = new SpanIdentifier($_SERVER['HTTP_X_B3_PARENTSPANID']);
 }
 
 $isSampled = null;
@@ -94,12 +118,29 @@ $tracer = new Tracer(
     'http://localhost/login',
     $endpoint,
     $logger,
-    $sampled,
+    $isSampled,
     $traceId,
-    $traceSpanId
+    $traceSpanId,
+    $parentSpanId
 );
-$tracer->setProfile(Tracer::BACKEND);
 ```
+
+The three identifiers play different roles, and mixing them up is the easiest way to end up with a broken trace:
+
+| Argument | Header | Meaning |
+| --- | --- | --- |
+| `$traceId` | `X-B3-TraceId` | The whole trace, shared by every service taking part in it |
+| `$traceSpanId` | `X-B3-SpanId` | This request's own span |
+| `$parentSpanId` | `X-B3-ParentSpanId` | The caller's span, the one this request hangs under |
+
+***Keep the validity checks.*** Headers arrive from outside your application, and `SpanIdentifier` and
+`TraceIdentifier` throw on anything that is not a valid identifier. Guarding with `is_zipkin_span_identifier()` /
+`is_zipkin_trace_identifier()` means a broken - or hostile - caller costs you the link to that caller rather than the
+request itself.
+
+Leave `$parentSpanId` as `null` whenever no traced caller propagated one, and the trace starts at your application.
+A front-end taking a request straight from a browser is the usual case - something called you, but it was not part of
+the trace and sent no B3 headers. A cron job or a queue consumer works the same way.
 
 All these lines must be initialized as soon as possible, in frameworks bootstrap.php is good place.
 
@@ -126,7 +167,8 @@ $spanIdentifier = new SpanIdentifier();
 Request logic
 Remember, you need to add B3 headers to your request:
 X-B3-TraceId = TracerInfo::getTraceId();
-X-B3-SpanId = $spanIdentifier;
+X-B3-SpanId = $spanIdentifier;              // The span you just created for this call
+X-B3-ParentSpanId = TracerInfo::getTraceSpanId(); // Your own span, the parent of that call
 X-B3-Sampled = TracerInfo::isSampled();
 */
 
@@ -181,9 +223,11 @@ TracerProxy::trace();
 All meta information are in static class TracerInfo
 ```php
 TracerInfo::getTraceId(); // TraceId - X-B3-TraceId
-TracerInfo::getTraceSpanId(); // ParentId - X-B3-ParentId
+TracerInfo::getTraceSpanId(); // This request's own SpanId - X-B3-SpanId
 TracerInfo::isSampled(); // Sampled - X-B3-Sampled
 ```
+`getTraceSpanId()` returns the span of *this* request, not its parent. When you call another service it becomes that
+service's `X-B3-ParentSpanId`, which is where the name confusion tends to come from.
 
 #### Making requests to other service
 Take a look at our [examples](https://github.com/whitemerry/phpkin/tree/master/example). You need to set B3 header by your own in yours rest/api/guzzle client.
@@ -200,12 +244,6 @@ For more info read [this ticket](https://github.com/whitemerry/phpkin/issues/2)!
 For SimpleHttpLogger, short answer, ***yes***
 
 For FileLogger, bit logner answer, you need to upload logs from *zipkin.log* to Zipkin by your own, for example by cron working in background making POST's to the [Zipkin (API)](http://zipkin.io/zipkin-api/#/paths/%252Fspans/post)
-
-## Unit tests
-Code Coverage (Generated by PHPUnit):
-- Lines: 70.35% (140 / 199)
-- Functions and Methods: 52.08% (25 / 48)
-- Classes and Traits: 58.33% (7 / 12)
 
 ## TODO
 - AsyncHttpLogger (Based on CURL)
