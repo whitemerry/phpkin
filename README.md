@@ -13,6 +13,33 @@ Compatible with both front and back-end applications and respects B3 Propagation
 $ composer require whitemerry/phpkin
 ```
 
+## Upgrading to 2.0
+`Tracer` used to serialize each `Span` the moment it was added. It now keeps the `Span` objects and serializes them once, in `trace()`, which is what makes `getSpans()` possible. What Zipkin receives is unchanged, but three things behave differently.
+
+#### `addSpan()` only accepts `Span`
+Passing anything else throws `InvalidArgumentException`. Serialization used to happen inside `addSpan()`, so any object with a `toArray()` method quietly worked:
+```php
+// Worked in 1.x by accident, throws in 2.0
+$tracer->addSpan($myOwnSpanClass);
+```
+If you have such a class, extend `Span` or build a real `Span` from it.
+
+#### Spans are serialized at `trace()` time
+Anything you change on a `Span` after adding it now ends up in the trace. Sharing one `Metadata` instance between spans is the case that bites, because `Metadata::set()` appends:
+```php
+$metadata = new Metadata();
+
+$metadata->set(Metadata::HTTP_PATH, '/first');
+$tracer->addSpan(new Span($firstId, 'First', $firstAnnotations, $metadata));
+
+$metadata->set(Metadata::HTTP_PATH, '/second');
+$tracer->addSpan(new Span($secondId, 'Second', $secondAnnotations, $metadata));
+```
+In 1.x the first span reported one annotation and the second reported two. In 2.0 both report both. Give each `Span` its own `Metadata` to keep the old result.
+
+#### `Tracer::$spans` holds `Span` objects
+Only relevant if you extend `Tracer` and read the protected property - it used to hold arrays. Use `getSpans()` where you can, and call `toArray()` yourself if you need the serialized form.
+
 ## Documentation
 
 #### Short implementation information
