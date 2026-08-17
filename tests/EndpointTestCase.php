@@ -9,7 +9,7 @@ use whitemerry\phpkin\Endpoint;
  * @author Piotr Bugaj <whitemerry@outlook.com>
  * @package whitemerry\phpkin\tests
  */
-class EndpointTestCase extends \PHPUnit_Framework_TestCase
+class EndpointTestCase extends \PHPUnit\Framework\TestCase
 {
     /**
      * @test

@@ -10,7 +10,7 @@ use whitemerry\phpkin\Endpoint;
  * @author Piotr Bugaj <whitemerry@outlook.com>
  * @package whitemerry\phpkin\tests
  */
-class AnnotationBlockTestCase extends \PHPUnit_Framework_TestCase
+class AnnotationBlockTestCase extends \PHPUnit\Framework\TestCase
 {
     /**
      * @test

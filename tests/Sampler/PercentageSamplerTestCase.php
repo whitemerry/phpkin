@@ -9,7 +9,7 @@ use whitemerry\phpkin\Sampler\PercentageSampler;
  * @author Piotr Bugaj <whitemerry@outlook.com>
  * @package whitemerry\phpkin\tests\Sampler
  */
-class PercentageSamplerTestCase extends \PHPUnit_Framework_TestCase
+class PercentageSamplerTestCase extends \PHPUnit\Framework\TestCase
 {
     /**
      * @test
