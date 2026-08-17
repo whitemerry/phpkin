@@ -1,6 +1,8 @@
 <?php
 namespace whitemerry\phpkin\tests;
 
+use whitemerry\phpkin\Identifier\SpanIdentifier;
+use whitemerry\phpkin\Identifier\TraceIdentifier;
 use whitemerry\phpkin\Span;
 use whitemerry\phpkin\Tracer;
 
@@ -12,6 +14,10 @@ use whitemerry\phpkin\Tracer;
  */
 class TracerTestCase extends TestCase
 {
+    const TRACE_ID = 'aaaaaaaaaaaaaaaa';
+    const TRACE_SPAN_ID = 'bbbbbbbbbbbbbbbb';
+    const PARENT_SPAN_ID = 'cccccccccccccccc';
+
     /**
      * @test
      */
@@ -115,5 +121,147 @@ class TracerTestCase extends TestCase
 
         // then
         $tracer->addSpan('plaster');
+    }
+
+    /**
+     * @test
+     */
+    public function shouldTraceRootSpanWhenNothingPropagated()
+    {
+        // given
+        $logger = new SpyLogger();
+        $tracer = new Tracer('hut', Mocker::getEndpoint(), $logger);
+
+        // when
+        $tracer->trace();
+
+        // then
+        $this->assertArrayNotHasKey('parentId', $this->getTraceSpan($logger));
+    }
+
+    /**
+     * @test
+     */
+    public function shouldParentTraceSpanToPropagatedParentSpanId()
+    {
+        // given
+        $logger = new SpyLogger();
+        $tracer = new Tracer(
+            'hut',
+            Mocker::getEndpoint(),
+            $logger,
+            true,
+            new TraceIdentifier(static::TRACE_ID),
+            new SpanIdentifier(static::TRACE_SPAN_ID),
+            new SpanIdentifier(static::PARENT_SPAN_ID)
+        );
+        $tracer->setProfile(Tracer::BACKEND);
+
+        // when
+        $tracer->trace();
+
+        // then
+        $traceSpan = $this->getTraceSpan($logger);
+        $this->assertSame(static::TRACE_ID, $traceSpan['traceId']);
+        $this->assertSame(static::TRACE_SPAN_ID, $traceSpan['id']);
+        $this->assertSame(static::PARENT_SPAN_ID, $traceSpan['parentId']);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldTraceRootSpanWhenParentSpanIdMissing()
+    {
+        // given
+        $logger = new SpyLogger();
+        $tracer = new Tracer(
+            'hut',
+            Mocker::getEndpoint(),
+            $logger,
+            true,
+            new TraceIdentifier(static::TRACE_ID),
+            new SpanIdentifier(static::TRACE_SPAN_ID)
+        );
+        $tracer->setProfile(Tracer::BACKEND);
+
+        // when
+        $tracer->trace();
+
+        // then
+        $this->assertArrayNotHasKey('parentId', $this->getTraceSpan($logger));
+    }
+
+    /**
+     * @test
+     */
+    public function shouldNeverMakeTraceSpanItsOwnParent()
+    {
+        // given
+        $logger = new SpyLogger();
+        $tracer = new Tracer(
+            'hut',
+            Mocker::getEndpoint(),
+            $logger,
+            true,
+            new TraceIdentifier(static::TRACE_ID),
+            new SpanIdentifier(static::TRACE_SPAN_ID)
+        );
+        // The deprecated backend profile is what the self-parenting was reported
+        // under, so it stays here to prove it cannot bring the behaviour back
+        $tracer->setProfile(Tracer::BACKEND);
+
+        // when
+        $tracer->trace();
+
+        // then
+        $traceSpan = $this->getTraceSpan($logger);
+        $this->assertFalse(
+            isset($traceSpan['parentId']) && $traceSpan['parentId'] === $traceSpan['id'],
+            'Trace span must not reference itself as its own parent'
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function shouldParentAddedSpansToTraceSpan()
+    {
+        // given
+        $logger = new SpyLogger();
+        $tracer = new Tracer(
+            'hut',
+            Mocker::getEndpoint(),
+            $logger,
+            true,
+            new TraceIdentifier(static::TRACE_ID),
+            new SpanIdentifier(static::TRACE_SPAN_ID),
+            new SpanIdentifier(static::PARENT_SPAN_ID)
+        );
+        $tracer->addSpan(new Span(
+            Mocker::getIdentifier(),
+            'plaster',
+            Mocker::getAnnotationBlock()
+        ));
+
+        // when
+        $tracer->trace();
+
+        // then
+        $traced = $logger->getTracedSpans();
+        $this->assertSame(static::TRACE_SPAN_ID, $traced[0]['parentId']);
+    }
+
+    /**
+     * Span Tracer builds for the request itself, appended last by trace()
+     *
+     * @param $logger SpyLogger
+     *
+     * @return array
+     */
+    protected function getTraceSpan($logger)
+    {
+        $traced = $logger->getTracedSpans();
+
+        return $traced[count($traced) - 1];
     }
 }
