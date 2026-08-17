@@ -46,7 +46,7 @@ class MetadataTestCase extends \PHPUnit\Framework\TestCase
     {
         // given
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessageRegExp('/\$key/');
+        $this->expectExceptionMessage('$key');
 
         $key = false;
 
@@ -64,7 +64,7 @@ class MetadataTestCase extends \PHPUnit\Framework\TestCase
     {
         // given
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessageRegExp('/\$value/');
+        $this->expectExceptionMessage('$value');
 
         $value = new \stdClass();
 
@@ -86,7 +86,7 @@ class MetadataTestCase extends \PHPUnit\Framework\TestCase
             if (is_array($element)) {
                 $this->assertArrayContainsOnlyStrings($element);
             } else {
-                $this->assertInternalType('string', $element);
+                $this->assertSame('string', gettype($element));
             }
         }
     }
