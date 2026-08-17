@@ -39,7 +39,7 @@ class Tracer
     /**
      * @var Span[]
      */
-    protected $spans = [];
+    protected $spans = array();
 
     /**
      * @var string

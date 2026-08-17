@@ -25,7 +25,7 @@ $endpoint = new Endpoint('Example backend app', '127.0.0.1', '1234');
  * Make sure host is available with http:// and port because SimpleHttpLogger does not throw error on failure
  * For debug purposes you can disable muteErrors
  */
-$logger = new SimpleHttpLogger(['host' => 'http://127.0.0.1:9411', 'muteErrors' => false]);
+$logger = new SimpleHttpLogger(array('host' => 'http://127.0.0.1:9411', 'muteErrors' => false));
 
 /**
  * Read headers
@@ -60,16 +60,16 @@ $requestStart = zipkin_timestamp();
 $spanId = new SpanIdentifier();
 
 // Context for file_get_contents for passing headers (B3 propagation)
-$context = stream_context_create([
-    'http' => [
+$context = stream_context_create(array(
+    'http' => array(
         'method' => 'GET',
         'header' =>
             'X-B3-TraceId: ' . TracerInfo::getTraceId() . "\r\n" .
             'X-B3-SpanId: ' . ((string) $spanId) . "\r\n" .
             'X-B3-ParentSpanId: ' . TracerInfo::getTraceSpanId() . "\r\n" .
             'X-B3-Sampled: ' . ((int) TracerInfo::isSampled()) . "\r\n"
-    ]
-]);
+    )
+));
 
 $request = file_get_contents($url, false, $context);
 

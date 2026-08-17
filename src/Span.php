@@ -64,8 +64,8 @@ class Span
         $this->setName($name);
         $this->setAnnotationBlock($annotationBlock);
         $this->setMetadata($metadata);
-        $this->setIdentifier('traceId', $traceId, [TracerInfo::class, 'getTraceId']);
-        $this->setIdentifier('parentId', $parentId, [TracerInfo::class, 'getTraceSpanId']);
+        $this->setIdentifier('traceId', $traceId, array('whitemerry\\phpkin\\TracerInfo', 'getTraceId'));
+        $this->setIdentifier('parentId', $parentId, array('whitemerry\\phpkin\\TracerInfo', 'getTraceSpanId'));
     }
 
     /**
@@ -75,14 +75,14 @@ class Span
      */
     public function toArray()
     {
-        $span = [
+        $span = array(
             'id' => (string) $this->id,
             'traceId' => (string) $this->traceId,
             'name' => $this->name,
             'timestamp' => $this->annotationBlock->getStartTimestamp(),
             'duration' => $this->annotationBlock->getDuration(),
             'annotations' => $this->annotationBlock->toArray()
-        ];
+        );
 
         if ($this->parentId !== null) {
             $span['parentId'] = (string) $this->parentId;

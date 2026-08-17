@@ -15,6 +15,7 @@ jobs:
       fail-fast: false
       matrix:
         php:
+          - '5.3'
           - '5.6'
           - '7.0'
           - '7.4'
@@ -29,6 +30,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
+          tools: composer:${{ matrix.php == '5.3' && '2.2' || 'v2' }}
           coverage: none
 
       - name: Resolve Composer cache directory
