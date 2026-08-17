@@ -88,14 +88,34 @@ class Tracer
      * Adds Span to trace
      *
      * @param $span Span
+     *
+     * @throws \InvalidArgumentException
      */
     public function addSpan($span)
     {
+        if (!($span instanceof Span)) {
+            throw new \InvalidArgumentException('$span must be instance of Span');
+        }
+
         if (!TracerInfo::isSampled()) {
             return;
         }
 
-        $this->spans[] = $span->toArray();
+        $this->spans[] = $span;
+    }
+
+    /**
+     * Spans collected so far
+     *
+     * The span describing the trace itself is built by trace(), because its
+     * end timestamp is not known before that. Call this after trace() to get
+     * the complete set. Empty when the trace is not sampled.
+     *
+     * @return Span[]
+     */
+    public function getSpans()
+    {
+        return $this->spans;
     }
 
     /**
@@ -113,7 +133,22 @@ class Tracer
         }
 
         $this->addTraceSpan($unsetParentId);
-        $this->logger->trace($this->spans);
+        $this->logger->trace($this->spansToArray());
+    }
+
+    /**
+     * Converts Spans to arrays
+     *
+     * @return array
+     */
+    protected function spansToArray()
+    {
+        $spans = array();
+        foreach ($this->spans as $span) {
+            $spans[] = $span->toArray();
+        }
+
+        return $spans;
     }
 
     /**
