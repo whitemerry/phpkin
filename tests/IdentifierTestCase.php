@@ -10,7 +10,7 @@ use whitemerry\phpkin\Identifier\TraceIdentifier;
  * @author Piotr Bugaj <whitemerry@outlook.com>
  * @package whitemerry\phpkin\tests
  */
-class IdentifierTestCase extends \PHPUnit_Framework_TestCase
+class IdentifierTestCase extends \PHPUnit\Framework\TestCase
 {
     /**
      * @test

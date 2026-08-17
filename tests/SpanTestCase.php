@@ -9,7 +9,7 @@ use whitemerry\phpkin\Span;
  * @author Piotr Bugaj <whitemerry@outlook.com>
  * @package whitemerry\phpkin\tests
  */
-class SpanTestCase extends \PHPUnit_Framework_TestCase
+class SpanTestCase extends \PHPUnit\Framework\TestCase
 {
     /**
      * @test

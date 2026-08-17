@@ -9,7 +9,7 @@ use whitemerry\phpkin\Metadata;
  * @author Piotr Bugaj <whitemerry@outlook.com>
  * @package whitemerry\phpkin\tests
  */
-class MetadataTestCase extends \PHPUnit_Framework_TestCase
+class MetadataTestCase extends \PHPUnit\Framework\TestCase
 {
     /**
      * @test
