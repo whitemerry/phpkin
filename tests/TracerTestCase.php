@@ -219,6 +219,53 @@ class TracerTestCase extends TestCase
     /**
      * @test
      */
+    public function shouldFailOnParentSpanId()
+    {
+        // then
+        $this->expectExceptionWithMessage('InvalidArgumentException', '$parentSpanId');
+
+        // when
+        new Tracer(
+            'hut',
+            Mocker::getEndpoint(),
+            new SpyLogger(),
+            true,
+            new TraceIdentifier(static::TRACE_ID),
+            new SpanIdentifier(static::TRACE_SPAN_ID),
+            static::PARENT_SPAN_ID
+        );
+    }
+
+    /**
+     * A caller that propagates the same value as X-B3-SpanId and
+     * X-B3-ParentSpanId is describing a cycle, which is no parent at all
+     *
+     * @test
+     */
+    public function shouldTraceRootSpanWhenParentSpanIdRepeatsTheSpanId()
+    {
+        // given
+        $logger = new SpyLogger();
+        $tracer = new Tracer(
+            'hut',
+            Mocker::getEndpoint(),
+            $logger,
+            true,
+            new TraceIdentifier(static::TRACE_ID),
+            new SpanIdentifier(static::TRACE_SPAN_ID),
+            new SpanIdentifier(static::TRACE_SPAN_ID)
+        );
+
+        // when
+        $tracer->trace();
+
+        // then
+        $this->assertArrayNotHasKey('parentId', $this->getTraceSpan($logger));
+    }
+
+    /**
+     * @test
+     */
     public function shouldParentAddedSpansToTraceSpan()
     {
         // given
