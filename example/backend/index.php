@@ -31,13 +31,18 @@ $logger = new SimpleHttpLogger(array('host' => 'http://127.0.0.1:9411', 'muteErr
  * Read headers
  */
 $traceId = null;
-if (!empty($_SERVER['HTTP_X_B3_TRACEID'])) {
+if (!empty($_SERVER['HTTP_X_B3_TRACEID']) && is_zipkin_trace_identifier($_SERVER['HTTP_X_B3_TRACEID'])) {
     $traceId = new TraceIdentifier($_SERVER['HTTP_X_B3_TRACEID']);
 }
 
 $traceSpanId = null;
-if (!empty($_SERVER['HTTP_X_B3_SPANID'])) {
+if (!empty($_SERVER['HTTP_X_B3_SPANID']) && is_zipkin_span_identifier($_SERVER['HTTP_X_B3_SPANID'])) {
     $traceSpanId = new SpanIdentifier($_SERVER['HTTP_X_B3_SPANID']);
+}
+
+$parentSpanId = null;
+if (!empty($_SERVER['HTTP_X_B3_PARENTSPANID']) && is_zipkin_span_identifier($_SERVER['HTTP_X_B3_PARENTSPANID'])) {
+    $parentSpanId = new SpanIdentifier($_SERVER['HTTP_X_B3_PARENTSPANID']);
 }
 
 $isSampled = null;
@@ -49,7 +54,15 @@ if (!empty($_SERVER['HTTP_X_B3_SAMPLED'])) {
  * And create tracer object, if you want to have statically access just initialize TracerProxy
  * TracerProxy::init($tracer);
  */
-$tracer = new Tracer('backend get /index.php', $endpoint, $logger, $isSampled, $traceId, $traceSpanId);
+$tracer = new Tracer(
+    'backend get /index.php',
+    $endpoint,
+    $logger,
+    $isSampled,
+    $traceId,
+    $traceSpanId,
+    $parentSpanId
+);
 
 /**
  * Here is place for your application logic, we are making request to example REST API
