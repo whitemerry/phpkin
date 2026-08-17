@@ -71,7 +71,6 @@ $tracer = new Tracer(
     $endpoint, // Your application meta-information
     $logger // Logger used to store/send traces
 );
-$tracer->setProfile(Tracer::FRONTEND);
 ```
 For back-end applications / microservices (Consumer of existing TraceId, SpanId and Sampled)
 ```php
@@ -98,7 +97,6 @@ $tracer = new Tracer(
     $traceId,
     $traceSpanId
 );
-$tracer->setProfile(Tracer::BACKEND);
 ```
 
 All these lines must be initialized as soon as possible, in frameworks bootstrap.php is good place.
