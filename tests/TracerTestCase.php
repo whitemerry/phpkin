@@ -97,6 +97,10 @@ class TracerTestCase extends TestCase
 
         // then
         $this->assertSame(array(), $tracer->getSpans());
+
+        // TracerInfo keeps 'sampled' in a static and phpunit.xml does not back
+        // static attributes up, so hand the next test a sampled trace
+        Mocker::initTracer();
     }
 
     /**

@@ -87,6 +87,10 @@ class Tracer
     /**
      * Adds Span to trace
      *
+     * The Span is kept as given and serialized by trace(), so anything changed
+     * on it afterwards - including a Metadata instance it shares with another
+     * Span - ends up in the trace.
+     *
      * @param $span Span
      *
      * @throws \InvalidArgumentException
