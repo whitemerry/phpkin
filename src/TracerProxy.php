@@ -36,6 +36,17 @@ class TracerProxy
     }
 
     /**
+     * @see Tracer::getSpans()
+     *
+     * @return Span[]
+     */
+    public static function getSpans()
+    {
+        static::checkInstance();
+        return static::$instance->getSpans();
+    }
+
+    /**
      * @see Tracer::trace()
      */
     public static function trace()
