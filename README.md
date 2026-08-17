@@ -135,6 +135,8 @@ foreach ($tracer->getSpans() as $span) {
 The span describing the trace itself is built by `trace()` (its end timestamp is not known before that), so call `getSpans()` after `trace()` to get the complete set.
 When the trace is not sampled nothing is collected and `getSpans()` stays empty.
 
+Spans are serialized once, by `trace()`. Anything you change on a `Span` after `addSpan()` ends up in the trace - including a `Metadata` instance shared between spans, which will report every annotation set on it, not only the ones set before that span was added. Give each `Span` its own `Metadata` if you don't want that.
+
 #### Calling tracer statically
 You can get access to tracer statically, in every place of your project, just init TracerProxy:
 ```php
