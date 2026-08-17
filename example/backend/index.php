@@ -50,7 +50,6 @@ if (!empty($_SERVER['HTTP_X_B3_SAMPLED'])) {
  * TracerProxy::init($tracer);
  */
 $tracer = new Tracer('backend get /index.php', $endpoint, $logger, $isSampled, $traceId, $traceSpanId);
-$tracer->setProfile(Tracer::BACKEND);
 
 /**
  * Here is place for your application logic, we are making request to example REST API

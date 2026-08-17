@@ -13,9 +13,6 @@ use whitemerry\phpkin\Sampler\Sampler;
  */
 class Tracer
 {
-    const FRONTEND = 'frontend';
-    const BACKEND = 'backend';
-
     /**
      * @var string
      */
@@ -40,11 +37,6 @@ class Tracer
      * @var Span[]
      */
     protected $spans = array();
-
-    /**
-     * @var string
-     */
-    protected $profile = Tracer::FRONTEND;
 
     /**
      * @var Identifier|null
@@ -82,16 +74,6 @@ class Tracer
         $this->startTimestamp = zipkin_timestamp();
 
         $this->parentSpanId = $parentSpanId;
-    }
-
-    /**
-     * Set's application profile
-     *
-     * @param $profile string Tracer::FRONTEND or Tracer::BACKEND
-     */
-    public function setProfile($profile)
-    {
-        $this->profile = $profile;
     }
 
     /**

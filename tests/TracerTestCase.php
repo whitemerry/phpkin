@@ -155,7 +155,6 @@ class TracerTestCase extends TestCase
             new SpanIdentifier(static::TRACE_SPAN_ID),
             new SpanIdentifier(static::PARENT_SPAN_ID)
         );
-        $tracer->setProfile(Tracer::BACKEND);
 
         // when
         $tracer->trace();
@@ -182,7 +181,6 @@ class TracerTestCase extends TestCase
             new TraceIdentifier(static::TRACE_ID),
             new SpanIdentifier(static::TRACE_SPAN_ID)
         );
-        $tracer->setProfile(Tracer::BACKEND);
 
         // when
         $tracer->trace();
@@ -206,9 +204,6 @@ class TracerTestCase extends TestCase
             new TraceIdentifier(static::TRACE_ID),
             new SpanIdentifier(static::TRACE_SPAN_ID)
         );
-        // The deprecated backend profile is what the self-parenting was reported
-        // under, so it stays here to prove it cannot bring the behaviour back
-        $tracer->setProfile(Tracer::BACKEND);
 
         // when
         $tracer->trace();
