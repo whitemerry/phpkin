@@ -8,6 +8,7 @@ Vagrantfile
 # Unit tests
 composer.lock
 vendor/
+.phpunit.result.cache
 log/
 build/
 
