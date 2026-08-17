@@ -41,7 +41,7 @@ class EndpointTestCase extends \PHPUnit\Framework\TestCase
     {
         // given
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessageRegExp('/\$serviceName/');
+        $this->expectExceptionMessage('$serviceName');
 
         $serviceName = true;
 
@@ -56,7 +56,7 @@ class EndpointTestCase extends \PHPUnit\Framework\TestCase
     {
         // given
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessageRegExp('/\$ip/');
+        $this->expectExceptionMessage('$ip');
 
         $ip = 'quote';
 
@@ -71,7 +71,7 @@ class EndpointTestCase extends \PHPUnit\Framework\TestCase
     {
         // given
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessageRegExp('/\$port/');
+        $this->expectExceptionMessage('$port');
 
         $port = 'simplicity';
 

@@ -64,7 +64,7 @@ class AnnotationBlockTestCase extends \PHPUnit\Framework\TestCase
     {
         // given
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessageRegExp('/\$type/');
+        $this->expectExceptionMessage('$type');
 
         $type = 'city';
 
@@ -84,7 +84,7 @@ class AnnotationBlockTestCase extends \PHPUnit\Framework\TestCase
     {
         // given
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessageRegExp('/\$endpoint/');
+        $this->expectExceptionMessage('$endpoint');
 
         $endpoint = 'pneumonia';
 
@@ -102,7 +102,7 @@ class AnnotationBlockTestCase extends \PHPUnit\Framework\TestCase
     {
         // given
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessageRegExp('/startTimestamp/');
+        $this->expectExceptionMessage('startTimestamp');
 
         $startTimestamp = 1234;
 
