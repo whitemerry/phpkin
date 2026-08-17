@@ -9,7 +9,7 @@ use whitemerry\phpkin\Endpoint;
  * @author Piotr Bugaj <whitemerry@outlook.com>
  * @package whitemerry\phpkin\tests
  */
-class EndpointTestCase extends \PHPUnit\Framework\TestCase
+class EndpointTestCase extends TestCase
 {
     /**
      * @test
@@ -40,8 +40,7 @@ class EndpointTestCase extends \PHPUnit\Framework\TestCase
     public function shouldFailOnName()
     {
         // given
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('$serviceName');
+        $this->expectExceptionWithMessage('InvalidArgumentException', '$serviceName');
 
         $serviceName = true;
 
@@ -55,8 +54,7 @@ class EndpointTestCase extends \PHPUnit\Framework\TestCase
     public function shouldFailOnIp()
     {
         // given
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('$ip');
+        $this->expectExceptionWithMessage('InvalidArgumentException', '$ip');
 
         $ip = 'quote';
 
@@ -70,8 +68,7 @@ class EndpointTestCase extends \PHPUnit\Framework\TestCase
     public function shouldFailOnPort()
     {
         // given
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('$port');
+        $this->expectExceptionWithMessage('InvalidArgumentException', '$port');
 
         $port = 'simplicity';
 

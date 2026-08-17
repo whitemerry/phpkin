@@ -27,14 +27,14 @@ class SimpleHttpLogger implements Logger
      *
      * @throws \BadMethodCallException
      */
-    public function __construct($options = [])
+    public function __construct($options = array())
     {
-        $defaults = [
+        $defaults = array(
             'host' => 'http://127.0.0.1:9144',
             'endpoint' => '/api/v1/spans',
             'muteErrors' => true,
-            'contextOptions' => []
-        ];
+            'contextOptions' => array()
+        );
 
         $this->options = array_merge($defaults, $options);
     }
@@ -44,14 +44,14 @@ class SimpleHttpLogger implements Logger
      */
     public function trace($spans)
     {
-        $contextOptions = [
-            'http' => [
+        $contextOptions = array(
+            'http' => array(
                 'method' => 'POST',
                 'header' => 'Content-type: application/json',
                 'content' => json_encode($spans),
                 'ignore_errors' => true
-            ]
-        ];
+            )
+        );
         $context = stream_context_create(array_merge_recursive($contextOptions, $this->options['contextOptions']));
         @file_get_contents($this->options['host'] . $this->options['endpoint'], false, $context);
 

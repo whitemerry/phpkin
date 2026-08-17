@@ -10,7 +10,7 @@ use whitemerry\phpkin\Endpoint;
  * @author Piotr Bugaj <whitemerry@outlook.com>
  * @package whitemerry\phpkin\tests
  */
-class AnnotationBlockTestCase extends \PHPUnit\Framework\TestCase
+class AnnotationBlockTestCase extends TestCase
 {
     /**
      * @test
@@ -63,8 +63,7 @@ class AnnotationBlockTestCase extends \PHPUnit\Framework\TestCase
     public function shouldFailOnType()
     {
         // given
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('$type');
+        $this->expectExceptionWithMessage('InvalidArgumentException', '$type');
 
         $type = 'city';
 
@@ -83,8 +82,7 @@ class AnnotationBlockTestCase extends \PHPUnit\Framework\TestCase
     public function shouldFailOnEndpoint()
     {
         // given
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('$endpoint');
+        $this->expectExceptionWithMessage('InvalidArgumentException', '$endpoint');
 
         $endpoint = 'pneumonia';
 
@@ -101,8 +99,7 @@ class AnnotationBlockTestCase extends \PHPUnit\Framework\TestCase
     public function shouldFailOnTimestamp()
     {
         // given
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('startTimestamp');
+        $this->expectExceptionWithMessage('InvalidArgumentException', 'startTimestamp');
 
         $startTimestamp = 1234;
 

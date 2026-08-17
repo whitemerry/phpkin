@@ -25,12 +25,12 @@ class FileLogger implements Logger
      *
      * @throws \BadMethodCallException
      */
-    public function __construct($options = [])
+    public function __construct($options = array())
     {
-        $defaults = [
+        $defaults = array(
             'path' => 'tmp' . DIRECTORY_SEPARATOR,
             'fileName' => 'zipkin.log'
-        ];
+        );
 
         $this->options = array_merge($defaults, $options);
 

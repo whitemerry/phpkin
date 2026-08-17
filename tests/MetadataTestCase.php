@@ -9,7 +9,7 @@ use whitemerry\phpkin\Metadata;
  * @author Piotr Bugaj <whitemerry@outlook.com>
  * @package whitemerry\phpkin\tests
  */
-class MetadataTestCase extends \PHPUnit\Framework\TestCase
+class MetadataTestCase extends TestCase
 {
     /**
      * @test
@@ -17,12 +17,12 @@ class MetadataTestCase extends \PHPUnit\Framework\TestCase
     public function shouldCreate()
     {
         // given
-        $data = [
-            ['part', 'basket'],
-            ['cabinet', false],
-            ['perform', 'race'],
-            ['chain', 1997]
-        ];
+        $data = array(
+            array('part', 'basket'),
+            array('cabinet', false),
+            array('perform', 'race'),
+            array('chain', 1997)
+        );
 
         // when
         $metadata = new Metadata();
@@ -45,8 +45,7 @@ class MetadataTestCase extends \PHPUnit\Framework\TestCase
     public function shouldFailOnKey()
     {
         // given
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('$key');
+        $this->expectExceptionWithMessage('InvalidArgumentException', '$key');
 
         $key = false;
 
@@ -63,8 +62,7 @@ class MetadataTestCase extends \PHPUnit\Framework\TestCase
     public function shouldFailOnValue()
     {
         // given
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('$value');
+        $this->expectExceptionWithMessage('InvalidArgumentException', '$value');
 
         $value = new \stdClass();
 

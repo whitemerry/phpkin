@@ -39,8 +39,8 @@ class TracerInfo
     public static function init($sampler, $traceId, $traceSpanId)
     {
         static::setSampled($sampler);
-        static::setIdentifier('traceId', $traceId, TraceIdentifier::class);
-        static::setIdentifier('traceSpanId', $traceSpanId, SpanIdentifier::class);
+        static::setIdentifier('traceId', $traceId, 'whitemerry\\phpkin\\Identifier\\TraceIdentifier');
+        static::setIdentifier('traceSpanId', $traceSpanId, 'whitemerry\\phpkin\\Identifier\\SpanIdentifier');
     }
 
     /**

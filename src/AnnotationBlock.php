@@ -76,18 +76,18 @@ class AnnotationBlock
      */
     public function toArray()
     {
-        return [
-            [
+        return array(
+            array(
                 'endpoint' => $this->endpoint->toArray(),
                 'timestamp' => $this->startTimestamp,
                 'value' => $this->values[0]
-            ],
-            [
+            ),
+            array(
                 'endpoint' => $this->endpoint->toArray(),
                 'timestamp' => $this->endTimestamp,
                 'value' => $this->values[1]
-            ]
-        ];
+            )
+        );
     }
 
     /**
@@ -101,10 +101,10 @@ class AnnotationBlock
     {
         switch ($type) {
             case static::CLIENT:
-                $this->values = ['cs', 'cr'];
+                $this->values = array('cs', 'cr');
                 break;
             case static::SERVER:
-                $this->values = ['sr', 'ss'];
+                $this->values = array('sr', 'ss');
                 break;
             default:
                 throw new \InvalidArgumentException('$type must be TYPE_CLIENT or TYPE_SERVER');
