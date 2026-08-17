@@ -51,3 +51,28 @@ jobs:
 
       - name: Run tests
         run: vendor/bin/phpunit
+
+  # Zipkin timestamps are 16 digits, which overflows a 32-bit int. php.net
+  # shipped x86 as the default Windows build for years, so that is where users
+  # hit it (see issue #18). linux/386 runs natively on the amd64 runners, so
+  # this needs no emulation.
+  tests-32bit:
+    name: PHP 8.3 (32-bit)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Run tests on 32-bit PHP
+        run: |
+          docker run --rm --platform linux/386 \
+            --volume "$PWD:/app" --workdir /app \
+            php:8.3-cli sh -c '
+              set -e
+              php -r "echo \"PHP_INT_SIZE=\", PHP_INT_SIZE, PHP_EOL;"
+              curl -sS https://getcomposer.org/installer \
+                | php -- --install-dir=/usr/local/bin --filename=composer
+              composer update --prefer-dist --no-interaction --no-progress
+              vendor/bin/phpunit
+            '
