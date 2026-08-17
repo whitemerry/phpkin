@@ -23,12 +23,12 @@ class AnnotationBlock
     protected $endpoint;
 
     /**
-     * @var int
+     * @var string
      */
     protected $startTimestamp;
 
     /**
-     * @var int
+     * @var string
      */
     protected $endTimestamp;
 
@@ -37,8 +37,8 @@ class AnnotationBlock
      * (Builds 2 annotations)
      *
      * @param $endpoint Endpoint
-     * @param $startTimestamp int
-     * @param $endTimestamp int Default now
+     * @param $startTimestamp string
+     * @param $endTimestamp string Default now
      * @param $type string Default CLIENT
      */
     public function __construct($endpoint, $startTimestamp, $endTimestamp = null, $type = AnnotationBlock::CLIENT)
@@ -52,7 +52,11 @@ class AnnotationBlock
     /**
      * Duration for span
      *
-     * @return int
+     * Timestamps are wider than a 32-bit int, so on those builds the
+     * subtraction produces a float. It stays exact: the difference is far
+     * below the 2^53 a float represents without loss.
+     *
+     * @return int|float
      */
     public function getDuration()
     {
@@ -62,7 +66,7 @@ class AnnotationBlock
     /**
      * Timestamp for span
      *
-     * @return int
+     * @return string
      */
     public function getStartTimestamp()
     {
@@ -131,7 +135,7 @@ class AnnotationBlock
      * Valid and set timestamp
      *
      * @param $field string
-     * @param $timestamp int
+     * @param $timestamp string
      * @param $now bool
      *
      * @throws \InvalidArgumentException
