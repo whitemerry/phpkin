@@ -110,8 +110,12 @@ if (!empty($_SERVER['HTTP_X_B3_PARENTSPANID']) && is_zipkin_span_identifier($_SE
 }
 
 $isSampled = null;
-if (!empty($_SERVER['HTTP_X_B3_SAMPLED'])) {
-    $isSampled = (bool) $_SERVER['HTTP_X_B3_SAMPLED'];
+if (isset($_SERVER['HTTP_X_B3_SAMPLED'])) {
+    if (in_array($_SERVER['HTTP_X_B3_SAMPLED'], array('1', 'true'), true)) {
+        $isSampled = true;
+    } elseif (in_array($_SERVER['HTTP_X_B3_SAMPLED'], array('0', 'false'), true)) {
+        $isSampled = false;
+    }
 }
 
 $tracer = new Tracer(
@@ -142,6 +146,10 @@ Leave `$parentSpanId` as `null` whenever no traced caller propagated one, and th
 A front-end taking a request straight from a browser is the usual case - something called you, but it was not part of
 the trace and sent no B3 headers. A cron job or a queue consumer works the same way.
 
+`X-B3-Sampled` is `1` or `0` (older clients send `true` / `false`). Don't cast it with `(bool)` behind `!empty()`: `'0'`
+is empty in PHP, so a caller that decided not to sample would read as "no decision" and get sampled by default. Anything
+unrecognised is left `null` for the tracer to decide.
+
 All these lines must be initialized as soon as possible, in frameworks bootstrap.php is good place.
 
 There are more parameters with descriptions in ***PHPDocs***! 
@@ -169,7 +177,7 @@ Remember, you need to add B3 headers to your request:
 X-B3-TraceId = TracerInfo::getTraceId();
 X-B3-SpanId = $spanIdentifier;              // The span you just created for this call
 X-B3-ParentSpanId = TracerInfo::getTraceSpanId(); // Your own span, the parent of that call
-X-B3-Sampled = TracerInfo::isSampled();
+X-B3-Sampled = (int) TracerInfo::isSampled();   // 1 or 0 - a bare false would send an empty header
 */
 
 $endpoint = new Endpoint(

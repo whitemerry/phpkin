@@ -46,8 +46,12 @@ if (!empty($_SERVER['HTTP_X_B3_PARENTSPANID']) && is_zipkin_span_identifier($_SE
 }
 
 $isSampled = null;
-if (!empty($_SERVER['HTTP_X_B3_SAMPLED'])) {
-    $isSampled = (bool) $_SERVER['HTTP_X_B3_SAMPLED'];
+if (isset($_SERVER['HTTP_X_B3_SAMPLED'])) {
+    if (in_array($_SERVER['HTTP_X_B3_SAMPLED'], array('1', 'true'), true)) {
+        $isSampled = true;
+    } elseif (in_array($_SERVER['HTTP_X_B3_SAMPLED'], array('0', 'false'), true)) {
+        $isSampled = false;
+    }
 }
 
 /**
