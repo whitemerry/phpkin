@@ -15,6 +15,8 @@ If you are starting today, or moving off phpkin:
 - **[OpenTelemetry for PHP](https://opentelemetry.io/docs/languages/php/getting-started/)** - start here. The [exporters guide](https://opentelemetry.io/docs/languages/php/exporters/) covers sending to an existing Zipkin backend.
 - **[openzipkin/zipkin-php](https://github.com/openzipkin/zipkin-php)** - the official Zipkin client, if you'd rather stay on Zipkin's own model.
 
+---
+
 First ***production ready***, simple and full Zipkin implementation without dependencies.
 
 Compatible with both front and back-end applications and respects B3 Propagation.
