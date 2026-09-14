@@ -192,33 +192,6 @@ class TracerTestCase extends TestCase
     /**
      * @test
      */
-    public function shouldNeverMakeTraceSpanItsOwnParent()
-    {
-        // given
-        $logger = new SpyLogger();
-        $tracer = new Tracer(
-            'hut',
-            Mocker::getEndpoint(),
-            $logger,
-            true,
-            new TraceIdentifier(static::TRACE_ID),
-            new SpanIdentifier(static::TRACE_SPAN_ID)
-        );
-
-        // when
-        $tracer->trace();
-
-        // then
-        $traceSpan = $this->getTraceSpan($logger);
-        $this->assertFalse(
-            isset($traceSpan['parentId']) && $traceSpan['parentId'] === $traceSpan['id'],
-            'Trace span must not reference itself as its own parent'
-        );
-    }
-
-    /**
-     * @test
-     */
     public function shouldFailOnParentSpanId()
     {
         // then

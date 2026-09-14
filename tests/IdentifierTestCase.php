@@ -90,8 +90,8 @@ class IdentifierTestCase extends TestCase
     }
 
     /**
-     * A span identifier is not a valid trace identifier is not a span identifier,
-     * so the lengths are not interchangeable
+     * A trace identifier is not a valid span identifier, so the lengths are
+     * not interchangeable
      *
      * @test
      */
@@ -108,6 +108,20 @@ class IdentifierTestCase extends TestCase
      * An absent header has no $_SERVER key at all, so it arrives as null. An
      * empty string means the header was sent and was empty, which is a caller
      * that got it wrong rather than a caller that said nothing
+     *
+     * @test
+     */
+    public function shouldFailOnEmptyTraceIdentifier()
+    {
+        // then
+        $this->expectExceptionWithMessage('InvalidArgumentException', '$fromString');
+
+        // when
+        new TraceIdentifier('');
+    }
+
+    /**
+     * @see shouldFailOnEmptyTraceIdentifier
      *
      * @test
      */
