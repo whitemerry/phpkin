@@ -4,6 +4,17 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/a785fa78ec069394b21d/maintainability)](https://codeclimate.com/github/whitemerry/phpkin/maintainability)
 [![Tests](https://github.com/whitemerry/phpkin/actions/workflows/tests.yml/badge.svg)](https://github.com/whitemerry/phpkin/actions/workflows/tests.yml)
 
+## This project is archived
+
+phpkin is no longer maintained. **2.0 is the final release** - no further fixes, features, or security updates. The code stays available under the MIT licence, so fork it freely.
+
+phpkin was written in 2017, and the approach it takes is deprecated. Hand-rolling Zipkin spans is no longer how tracing is done in PHP. **OpenTelemetry** now covers the whole stack - traces, metrics and logs behind one vendor-neutral API, with auto-instrumentation for common frameworks and exporters for every major backend, Zipkin included.
+
+If you are starting today, or moving off phpkin:
+
+- **[OpenTelemetry for PHP](https://opentelemetry.io/docs/languages/php/getting-started/)** - start here. The [exporters guide](https://opentelemetry.io/docs/languages/php/exporters/) covers sending to an existing Zipkin backend.
+- **[openzipkin/zipkin-php](https://github.com/openzipkin/zipkin-php)** - the official Zipkin client, if you'd rather stay on Zipkin's own model.
+
 First ***production ready***, simple and full Zipkin implementation without dependencies.
 
 Compatible with both front and back-end applications and respects B3 Propagation.
@@ -253,8 +264,5 @@ For SimpleHttpLogger, short answer, ***yes***
 
 For FileLogger, bit logner answer, you need to upload logs from *zipkin.log* to Zipkin by your own, for example by cron working in background making POST's to the [Zipkin (API)](http://zipkin.io/zipkin-api/#/paths/%252Fspans/post)
 
-## TODO
-- AsyncHttpLogger (Based on CURL)
-- *Upload to zipkin* cron for FileLogger
 ---
 Inspired by [Tolerance](https://github.com/Tolerance/Tolerance)
