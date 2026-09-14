@@ -7,8 +7,8 @@ Now your aplication is available at [http://127.0.0.1:1234/](http://127.0.0.1:12
 
 Make sure your Zipkin's application is up on `127.0.0.1:9411`.
 
-If you have other ip/port just modify index.php at line 27.
+If you have other ip/port just modify index.php at line 28.
 
 ### Are you getting error?
 - Fatal error: Uncaught whitemerry\phpkin\Logger\LoggerException: Trace upload failed
-   * Zipkin's URL is invalid at line 27 in index.php
+   * Zipkin's URL is invalid at line 28 in index.php
