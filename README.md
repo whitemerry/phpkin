@@ -14,14 +14,14 @@ $ composer require whitemerry/phpkin
 ```
 
 ## Upgrading to 2.0
-`Tracer` used to serialize each `Span` the moment it was added. It now keeps the `Span` objects and serializes them once, in `trace()`, which is what makes `getSpans()` possible. What Zipkin receives is unchanged, but five things behave differently.
+`Tracer` used to serialize each `Span` the moment it was added. It now keeps the `Span` objects and serializes them once, in `trace()`, which is what makes `getSpans()` possible. That alone does not change what Zipkin receives, but five things behave differently - and the first one does.
 
 #### The trace span is parented to its caller
 A back-end application used to give its trace span its own SpanId as the ParentId, so the span came out as its own parent and the caller propagated in `X-B3-ParentSpanId` was ignored. That header is now the seventh `Tracer` argument and links the span to its caller:
 ```php
 $tracer = new Tracer($name, $endpoint, $logger, $isSampled, $traceId, $traceSpanId, $parentSpanId);
 ```
-Leave it `null` and the span stays a root, which is what a front-end application wants.
+Leave it `null` and the span stays a root, which is what a front-end application wants. A parent equal to the span's own id describes a cycle and is treated as no parent at all.
 
 `Tracer::setProfile()`, `Tracer::FRONTEND` and `Tracer::BACKEND` are gone, because whether the span has a parent now follows from `$parentSpanId` alone. Drop the call; it fails at bootstrap rather than quietly doing nothing, which is the point - an application that kept calling it without passing `$parentSpanId` would go from self-parented spans to root spans with nothing to show anything had changed.
 
@@ -29,8 +29,8 @@ Leave it `null` and the span stays a root, which is what a front-end application
 `SpanIdentifier` and `TraceIdentifier` used to generate a fresh random identifier when handed something that was not a valid one, so a malformed B3 header produced a span attached to an id that had never existed. They now throw `InvalidArgumentException`:
 ```php
 new SpanIdentifier('garbage');            // throws in 2.0, was a random identifier in 1.x
-new SpanIdentifier();                     // still generates one
-new SpanIdentifier('');                   // still generates one - an absent header reads as ''
+new SpanIdentifier('');                   // throws in 2.0 too - a header sent empty is a broken caller
+new SpanIdentifier();                     // still generates one, and so does null
 ```
 Guard anything coming from a header with `is_zipkin_span_identifier()` / `is_zipkin_trace_identifier()`, as the back-end example below does.
 
